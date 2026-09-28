@@ -3,6 +3,14 @@
   "version": "0.1.0",
   "description": "Accessible React payment-help UI for BOLT11 Lightning invoices.",
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/pseudozach/lightning-pay-kit.git"
+  },
+  "homepage": "https://github.com/pseudozach/lightning-pay-kit#readme",
+  "bugs": {
+    "url": "https://github.com/pseudozach/lightning-pay-kit/issues"
+  },
   "keywords": ["bitcoin", "lightning", "bolt11", "react", "payments"],
   "type": "module",
   "sideEffects": ["./dist/styles.css"],
