@@ -1,24 +1,36 @@
-# LightningKit MVP Implementation Plan
+# Lightning Pay Kit MVP Implementation Plan
 
-**Goal:** Build a standalone, open-source TypeScript/React monorepo that safely validates and explains BOLT11 invoices and offers honest WebLN, `lightning:` handoff, QR, and copy payment paths.
+**Goal:** Build a small open-source React library that takes a Lightning invoice and presents an accessible, searchable “How can I pay?” picker compatible with SMS4Sats.
 
-**Architecture:** A zero-DOM `core` package owns input normalization, BOLT11 decoding/verification, policy, and the attempt state machine. Optional transport and React packages depend on core. A schema-validated, evidence-backed wallet directory is data-only. A Vite playground exercises the published package boundaries.
+**Architecture:** One framework-neutral core/data package and one React package in a pnpm workspace, plus a Vite playground. The library uses only canonical `lightning:` handoff, local QR/copy, and verified HTTPS provider/help/swap destinations. It has no wallet-connection or payment-execution layer.
 
-**Stack:** pnpm workspaces, TypeScript strict mode, tsup, Vitest, React 18, Testing Library, axe-core, Playwright, Zod, audited noble/scure primitives.
+**Stack:** TypeScript strict mode, React 18 peer dependency, pnpm workspaces, tsup, Vitest, Testing Library, axe-core, Playwright, Zod, local QR generation.
 
-## Scope for the first working vertical slice
+## Tasks
 
-1. Initialize workspace, strict shared TypeScript/lint/test/build configuration, MIT source license, separate trademark/assets policy, security and contribution docs.
-2. `@lightningkit/core`: bounded raw/`lightning:` normalization, BOLT11 checksum/signature/cardinality/network/amount/expiry validation, exact bigint msat, policy errors, URI generation, preimage verification, and an attempt state machine that separates `handed_off`, `succeeded`, and `unknown`.
-3. `@lightningkit/transport-webln`: hydration-safe capability detection; `enable()` and `sendPayment()` only inside explicit `pay()`; abort/rejection/malformed-result handling; preimage verification delegated to core.
-4. `@lightningkit/wallet-directory`: strict schema, safe URL/template validation, deterministic filtering/ranking, and a small bundled seed whose unverifiable capabilities are hidden rather than guessed.
-5. `@lightningkit/react`: accessible `PayLightningButton`, modal/bottom sheet, headless hook, exact amount/network/expiry summary, WebLN action, generic URI action, local QR, copy/manual fallback, keyboard/focus restoration, live regions, and reduced-motion CSS.
-6. `apps/playground`: mocked mainnet/testnet invoice examples and no real-payment path.
-7. Verification: focused RED→GREEN tests for every behavior, complete unit/component suite, strict typecheck/lint/build, SSR import check, package tarball inspection, Playwright at 320px and desktop, axe scan, secret/network scan, then independent code review.
+1. Initialize workspace configuration, package exports, MIT source license, trademark/logo policy, security/threat model, contribution guide, and dependency decision record.
+2. Build `packages/core` test-first:
+   - bounded normalization of raw BOLT11 and `lightning:` input;
+   - canonical URI creation without `//`;
+   - safe invoice display metadata sufficient for amount/network/expiry when available;
+   - provider schema, safe HTTPS URL validation, category/search/filter/ranking;
+   - affiliate overrides separated from organic ranking;
+   - typed handoff events that can never claim payment success.
+3. Build `packages/react` test-first:
+   - `LightningPaymentHelp`, `LightningPaymentModal`, and `useLightningPaymentHelp`;
+   - compact question-mark/button trigger;
+   - accessible mobile bottom sheet / desktop modal with focus trap/restore and Escape;
+   - searchable category grid/list of wallets, apps, exchanges, and swaps;
+   - generic Open Lightning Wallet, local QR, copy, and selectable fallback;
+   - truthful named-provider labels; no app-specific URI;
+   - optional visibly disclosed FixedFloat/other host affiliate links.
+4. Normalize a conservative provider seed from current OpenReceive data, retaining evidence/status metadata and hiding unverified or suspended routes by default. No remote registry at runtime.
+5. Build `apps/playground` with fake fixtures only and demonstrate the exact SMS4Sats integration shape.
+6. Verify lint, strict typecheck, unit/component tests, build, SSR import, package contents, 320px/desktop Playwright, keyboard/focus behavior, axe, no unexpected runtime network, and no unsafe schemes.
+7. Run independent security/logic review, fix blocking findings, then create a verified local commit. Do not publish to npm or create a remote repository until the owner confirms the final name and authenticates npm/GitHub.
 
-## Explicit first-release limits
+## Explicit limits
 
-- NWC is not shipped until encrypted event handling, secret storage injection, replay/request binding, and relay behavior receive their own complete test matrix.
-- BIP21 is omitted from the first vertical slice unless implemented and tested fail-closed; raw BOLT11 and canonical `lightning:` are mandatory.
-- No named-wallet custom link is enabled without primary evidence plus a recorded real-device test.
-- No remote registry, telemetry, affiliate ranking, real invoice payment, app-store probing, or installed-wallet enumeration.
+- No NWC, WebLN, generic WalletConnect, persistent connections, real payments, or wallet-specific custom schemes.
+- No automatic swap creation until a provider’s current first-party API, limits, destination model, and affiliate behavior are verified and tested. MVP swap rows may copy the invoice and open a disclosed HTTPS route.
+- No claim that a provider can pay arbitrary BOLT11 invoices without current primary evidence.

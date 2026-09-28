@@ -1,0 +1,42 @@
+{
+  "name": "lightning-pay-kit",
+  "version": "0.1.0",
+  "description": "Accessible React payment-help UI for BOLT11 Lightning invoices.",
+  "license": "MIT",
+  "keywords": ["bitcoin", "lightning", "bolt11", "react", "payments"],
+  "type": "module",
+  "sideEffects": ["./dist/styles.css"],
+  "files": ["dist", "README.md", "LICENSE"],
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    },
+    "./styles.css": "./dist/styles.css"
+  },
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "scripts": {
+    "build": "tsup --config tsup.config.ts && cp src/styles.css dist/styles.css",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@scure/base": "^1.2.6",
+    "qrcode.react": "^4.2.0",
+    "zod": "^4.1.11"
+  },
+  "peerDependencies": {
+    "react": ">=17 <20",
+    "react-dom": ">=17 <20"
+  },
+  "devDependencies": {
+    "@types/react": "^18.3.24",
+    "@types/react-dom": "^18.3.7",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "tsup": "^8.5.0",
+    "typescript": "^5.9.2"
+  }
+}
+

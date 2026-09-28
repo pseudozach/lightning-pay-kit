@@ -1,0 +1,12 @@
+{
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": {
+    "baseUrl": "../..",
+    "jsx": "react",
+    "paths": {
+      "@lightning-pay-kit/core": ["packages/core/src/index.ts"]
+    },
+    "types": ["node", "vitest/globals", "@testing-library/jest-dom"]
+  },
+  "include": ["src", "test", "tsup.config.ts"]
+}
