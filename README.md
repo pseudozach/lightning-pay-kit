@@ -3,22 +3,18 @@
 A small React component that sits beside a BOLT11 invoice and answers one
 question: **How can I pay?**
 
-It offers a canonical `lightning:<invoice>` handoff, a locally rendered QR,
-copy/manual fallbacks, and a searchable directory of wallets, payment apps,
-exchanges, and any independently verified swap routes. It is deliberately not a
-wallet connector or payment processor.
+It offers a searchable directory of wallets, payment apps, exchanges, and any
+independently verified swap routes. It is deliberately not a wallet connector
+or payment processor.
 
 ## Scope and guarantees
 
 - No WebLN, NWC, WalletConnect, custody, balance access, automatic payment, or
   wallet-specific custom URI schemes.
-- Browsers cannot enumerate installed Lightning wallets. The primary action asks
-  the operating system to handle the standard `lightning:` URI.
-- QR, copy, URI, and provider-page actions emit only `status: "handed_off"`.
-  They never mean the invoice was paid. Settlement remains the host backend's
-  responsibility.
+- Provider-page actions emit only `status: "handed_off"`. They never mean the
+  invoice was paid. Settlement remains the host backend's responsibility.
 - No telemetry, remote registry, runtime CDN, remote image, or project-server
-  request. Invoice parsing and QR generation happen locally.
+  request. Invoice parsing and provider filtering happen locally.
 - Provider destinations are credential-free HTTPS URLs. Named rows say to copy
   the invoice and open instructions/site; they never imply invoice injection.
 

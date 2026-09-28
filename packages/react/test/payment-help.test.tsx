@@ -7,27 +7,24 @@ import { fakeInvoice } from "../../core/test/fixtures.js";
 import { LightningPaymentHelp } from "../src/index.js";
 
 describe("LightningPaymentHelp", () => {
-  it("opens a labeled dialog with canonical handoff, local fallbacks, and truthful provider actions", async () => {
+  it("opens directly to the searchable provider directory without invoice details", async () => {
     const user = userEvent.setup();
-    const invoice = fakeInvoice({ createdAt: 1_700_000_000 });
-    render(<LightningPaymentHelp invoice={invoice} now={1_700_000_001} />);
+    render(<LightningPaymentHelp invoice={fakeInvoice({ createdAt: 1_700_000_000 })} now={1_700_000_001} />);
 
     await user.click(screen.getByRole("button", { name: "How can I pay this Lightning invoice?" }));
 
     const dialog = screen.getByRole("dialog", { name: "How can I pay?" });
-    expect(within(dialog).getByText("Handoff available")).toBeVisible();
-    expect(within(dialog).getByText(/wallet must validate the invoice/i)).toBeVisible();
-    expect(within(dialog).getByRole("link", { name: "Open Lightning wallet" })).toHaveAttribute(
-      "href",
-      `lightning:${invoice}`
-    );
-    expect(within(dialog).getByRole("button", { name: "Copy invoice" })).toBeVisible();
-    expect(within(dialog).getByLabelText("Lightning invoice text")).toHaveValue(invoice);
-    expect(within(dialog).getByText("1,000 sats")).toBeVisible();
-    expect(
-      within(dialog).getByText("Copy invoice, then open Phoenix's website")
-    ).toBeVisible();
-    expect(dialog.innerHTML).not.toContain("phoenix:");
+    expect(within(dialog).getByRole("heading", { name: "Provider directory" })).toBeVisible();
+    expect(within(dialog).getByRole("searchbox", { name: "Search payment providers" })).toBeVisible();
+    expect(within(dialog).getByRole("button", { name: "Wallets" })).toBeVisible();
+    expect(within(dialog).getByText("Phoenix")).toBeVisible();
+    expect(within(dialog).queryByText(/choose a handoff method/i)).not.toBeInTheDocument();
+    expect(within(dialog).queryByText("Handoff available")).not.toBeInTheDocument();
+    expect(within(dialog).queryByRole("link", { name: "Open Lightning wallet" })).not.toBeInTheDocument();
+    expect(within(dialog).queryByRole("button", { name: "Copy invoice" })).not.toBeInTheDocument();
+    expect(within(dialog).queryByLabelText("Lightning invoice text")).not.toBeInTheDocument();
+    expect(within(dialog).queryByLabelText("Lightning invoice QR code")).not.toBeInTheDocument();
+    expect(within(dialog).queryByText("Where to continue")).not.toBeInTheDocument();
   });
 
   it("searches aliases and categories without exposing unverified routes", async () => {
@@ -58,19 +55,7 @@ describe("LightningPaymentHelp", () => {
     expect(trigger).toHaveFocus();
   });
 
-  it("keeps selectable text and an honest status when clipboard copying fails", async () => {
-    const user = userEvent.setup();
-    const writeText = vi.fn().mockRejectedValue(new Error("denied"));
-    Object.defineProperty(navigator, "clipboard", { configurable: true, value: { writeText } });
-    render(<LightningPaymentHelp invoice={fakeInvoice()} now={1_700_000_001} trigger="button" />);
-    await user.click(screen.getByRole("button", { name: "How can I pay?" }));
-    await user.click(screen.getByRole("button", { name: "Copy invoice" }));
-
-    expect(screen.getByRole("status")).toHaveTextContent("Copy unavailable. Select the invoice text below.");
-    expect(screen.getByLabelText("Lightning invoice text")).toBeVisible();
-  });
-
-  it("reports provider-copy failure instead of claiming the invoice was copied", async () => {
+  it("reports provider-copy failure concisely without restoring invoice details", async () => {
     const user = userEvent.setup();
     Object.defineProperty(navigator, "clipboard", {
       configurable: true,
@@ -82,10 +67,9 @@ describe("LightningPaymentHelp", () => {
     await user.click(screen.getByRole("link", { name: /Phoenix/ }));
 
     await waitFor(() =>
-      expect(screen.getByRole("status")).toHaveTextContent(
-        "Invoice was not copied. Return here and use manual copy."
-      )
+      expect(screen.getByRole("status")).toHaveTextContent("Invoice was not copied.")
     );
+    expect(screen.queryByLabelText("Lightning invoice text")).not.toBeInTheDocument();
   });
 
   it("uses a stylesheet scroll-lock class without mutating inline body styles", async () => {
@@ -151,8 +135,12 @@ describe("LightningPaymentHelp", () => {
     expect(providerLink).toHaveAttribute("rel", "sponsored noopener noreferrer");
     expect(providerLink).toHaveTextContent("Affiliate link");
 
-    await user.click(screen.getByRole("button", { name: "Copy invoice" }));
-    expect(onHandoff).toHaveBeenCalledWith({ status: "handed_off", method: "copy" });
+    await user.click(providerLink);
+    expect(onHandoff).toHaveBeenCalledWith({
+      status: "handed_off",
+      method: "provider_https",
+      providerId: "phoenix"
+    });
     expect(JSON.stringify(onHandoff.mock.calls)).not.toContain("paid");
   });
 });

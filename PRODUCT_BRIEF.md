@@ -6,11 +6,11 @@ A lightweight, open-source React UI component that answers one question beside a
 
 The host passes a BOLT11 invoice. A small trigger (for example a `?` button) opens an accessible mobile sheet / desktop dialog containing:
 
-- a prominent generic **Open Lightning wallet** action using only `lightning:<invoice>`;
-- local QR and copy fallbacks;
 - a fast searchable grid/list grouped into wallets, payment apps, exchanges, and swaps;
-- truthful provider actions such as “Copy invoice, then open Binance’s Lightning withdrawal instructions” when direct invoice handoff is unavailable;
-- an optional “I have another asset” section that can show verified swap routes and host-supplied, visibly disclosed affiliate links.
+- truthful provider actions such as “Copy invoice, then open Binance’s Lightning withdrawal instructions”;
+- optional host-supplied, visibly disclosed affiliate destinations.
+
+The modal is provider-first: it does not repeat the host page’s QR, invoice text, amount, network, or generic wallet handoff UI.
 
 ## Deliberate simplifications
 

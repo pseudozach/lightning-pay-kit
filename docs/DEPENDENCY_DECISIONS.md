@@ -22,5 +22,4 @@ connection framework.
 - `@scure/base` supplies audited Bech32 checksum/word conversion without DOM or
   network behavior.
 - `zod` validates provider and host-override records at the package boundary.
-- `qrcode.react` renders QR locally from a string and makes no network request.
 

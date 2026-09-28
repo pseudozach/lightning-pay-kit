@@ -1,12 +1,11 @@
 # lightning-pay-kit
 
 Accessible React payment-help UI for BOLT11 Lightning invoices. It provides a
-compact `?` or “How can I pay?” trigger, canonical `lightning:<invoice>` handoff,
-a locally rendered QR, copy/manual fallback, and a conservative searchable
-provider directory.
+compact `?` or “How can I pay?” trigger and a conservative searchable provider
+directory.
 
-It is **not** a wallet connector or payment processor. A URI launch, QR display,
-copy, or provider-page visit is only a handoff and never proves payment.
+It is **not** a wallet connector or payment processor. A provider-page visit is
+only a handoff and never proves payment.
 
 ## Install
 
@@ -42,7 +41,7 @@ types are also exported.
 
 - No WebLN, NWC, WalletConnect, automatic payment, or wallet-specific guessed URI.
 - No runtime telemetry, provider fetch, remote image, or project-server request.
-- QR generation, invoice parsing, search, and filtering are local.
+- Invoice parsing, search, and filtering are local.
 - Runtime provider records and affiliate overrides require safe HTTPS URLs.
 - Provider affiliate overrides are visibly disclosed and cannot alter ranking.
 - Settlement must continue to come from the merchant backend.

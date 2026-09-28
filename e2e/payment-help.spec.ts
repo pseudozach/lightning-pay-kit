@@ -16,10 +16,10 @@ test("is usable, responsive, keyboard-safe, and accessible", async ({ page }, te
   const dialog = page.getByRole("dialog", { name: "How can I pay?" });
   await expect(dialog).toBeVisible();
   await expect(page.getByRole("button", { name: "Close payment help" })).toBeFocused();
-  await expect(page.getByRole("link", { name: "Open Lightning wallet" })).toHaveAttribute(
-    "href",
-    /^lightning:lnbcrt/
-  );
+  await expect(dialog.getByRole("heading", { name: "Provider directory" })).toBeVisible();
+  await expect(dialog.getByRole("searchbox", { name: "Search payment providers" })).toBeVisible();
+  await expect(dialog.getByLabel("Lightning invoice QR code")).toHaveCount(0);
+  await expect(dialog.getByLabel("Lightning invoice text")).toHaveCount(0);
 
   const box = await dialog.boundingBox();
   expect(box).not.toBeNull();

@@ -78,8 +78,7 @@
 
 .lpk-header h2,
 .lpk-directory h3,
-.lpk-eyebrow,
-.lpk-explainer {
+.lpk-eyebrow {
   margin: 0;
 }
 
@@ -98,8 +97,7 @@
 }
 
 .lpk-close,
-.lpk-chip,
-.lpk-secondary-button {
+.lpk-chip {
   background: var(--lpk-panel-raised);
   border: 1px solid var(--lpk-border);
   color: var(--lpk-ink);
@@ -114,47 +112,6 @@
   width: 44px;
 }
 
-.lpk-explainer {
-  color: var(--lpk-muted);
-  font-size: 0.88rem;
-  line-height: 1.5;
-  margin-top: 0.85rem;
-  max-width: 62ch;
-}
-
-.lpk-summary {
-  background: linear-gradient(135deg, #24261f, #1b1c19);
-  border: 1px solid var(--lpk-border);
-  border-radius: 16px;
-  display: grid;
-  gap: 0.9rem;
-  grid-template-columns: repeat(3, 1fr);
-  margin-top: 1rem;
-  padding: 1rem;
-}
-
-.lpk-summary > div {
-  display: flex;
-  flex-direction: column;
-  gap: 0.2rem;
-  min-width: 0;
-}
-
-.lpk-summary-description {
-  grid-column: 1 / -1;
-}
-
-.lpk-summary-label {
-  color: var(--lpk-muted);
-  font-size: 0.72rem;
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
-}
-
-.lpk-danger-text {
-  color: var(--lpk-danger);
-}
-
 .lpk-error {
   background: rgb(255 140 122 / 10%);
   border: 1px solid rgb(255 140 122 / 40%);
@@ -166,42 +123,6 @@
   padding: 0.9rem;
 }
 
-.lpk-primary-actions {
-  display: grid;
-  gap: 0.7rem;
-  grid-template-columns: 2fr 1fr;
-  margin-top: 1rem;
-}
-
-.lpk-primary-button,
-.lpk-secondary-button {
-  align-items: center;
-  border-radius: 13px;
-  box-sizing: border-box;
-  display: inline-flex;
-  font-size: 0.95rem;
-  font-weight: 750;
-  justify-content: center;
-  min-height: 48px;
-  padding: 0.75rem 1rem;
-  text-decoration: none;
-}
-
-.lpk-primary-button {
-  background: var(--lpk-accent);
-  color: var(--lpk-accent-ink);
-}
-
-.lpk-bolt {
-  font-size: 1.35rem;
-  margin-right: 0.45rem;
-}
-
-.lpk-secondary-button:disabled {
-  cursor: not-allowed;
-  opacity: 0.45;
-}
-
 .lpk-status {
   color: var(--lpk-muted);
   font-size: 0.78rem;
@@ -209,45 +130,6 @@
   padding: 0.35rem 0.15rem 0;
 }
 
-.lpk-manual {
-  border-bottom: 1px solid var(--lpk-border);
-  padding: 0.6rem 0 1rem;
-}
-
-.lpk-manual summary {
-  cursor: pointer;
-  font-size: 0.82rem;
-  font-weight: 700;
-  min-height: 32px;
-}
-
-.lpk-manual-content {
-  align-items: center;
-  display: grid;
-  gap: 1rem;
-  grid-template-columns: auto 1fr;
-  margin-top: 0.7rem;
-}
-
-.lpk-qr {
-  background: #fff;
-  border-radius: 12px;
-  color: #10110e;
-  display: grid;
-  padding: 0.55rem;
-  place-items: center;
-}
-
-.lpk-invoice-label {
-  color: var(--lpk-muted);
-  display: flex;
-  flex-direction: column;
-  font-size: 0.75rem;
-  gap: 0.4rem;
-  min-width: 0;
-}
-
-.lpk-invoice-label textarea,
 .lpk-search input {
   background: #10110f;
   border: 1px solid var(--lpk-border);
@@ -257,16 +139,6 @@
   font: inherit;
 }
 
-.lpk-invoice-label textarea {
-  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
-  font-size: 0.72rem;
-  line-height: 1.4;
-  max-width: 100%;
-  padding: 0.7rem;
-  resize: vertical;
-  width: 100%;
-  word-break: break-all;
-}
 
 .lpk-directory {
   margin-top: 1.1rem;
@@ -419,18 +291,8 @@
     width: 42px;
   }
 
-  .lpk-summary {
-    grid-template-columns: repeat(2, 1fr);
-  }
-
-  .lpk-primary-actions,
-  .lpk-manual-content,
   .lpk-provider-grid {
     grid-template-columns: 1fr;
-  }
-
-  .lpk-qr {
-    justify-self: center;
   }
 
   .lpk-directory-heading {
