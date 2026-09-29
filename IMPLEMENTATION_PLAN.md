@@ -2,9 +2,9 @@
 
 **Goal:** Build a small open-source React library that takes a Lightning invoice and presents an accessible, searchable “How can I pay?” picker compatible with SMS4Sats.
 
-**Architecture:** One framework-neutral core/data package and one React package in a pnpm workspace, plus a Vite playground. The library uses only canonical `lightning:` handoff, local QR/copy, and verified HTTPS provider/help/swap destinations. It has no wallet-connection or payment-execution layer.
+**Architecture:** One framework-neutral core/data package and one React package in a pnpm workspace, plus a Vite playground. The library presents verified HTTPS provider/help/swap destinations and copies the invoice when a provider is selected. It has no wallet-connection or payment-execution layer.
 
-**Stack:** TypeScript strict mode, React 18 peer dependency, pnpm workspaces, tsup, Vitest, Testing Library, axe-core, Playwright, Zod, local QR generation.
+**Stack:** TypeScript strict mode, React 17–19 peer support, pnpm workspaces, tsup, Vitest, Testing Library, axe-core, Playwright, and Zod.
 
 ## Tasks
 
@@ -21,7 +21,7 @@
    - compact question-mark/button trigger;
    - accessible mobile bottom sheet / desktop modal with focus trap/restore and Escape;
    - searchable category grid/list of wallets, apps, exchanges, and swaps;
-   - generic Open Lightning Wallet, local QR, copy, and selectable fallback;
+   - provider-first layout with no duplicate QR, invoice text, summary, or generic wallet launcher;
    - truthful named-provider labels; no app-specific URI;
    - optional visibly disclosed FixedFloat/other host affiliate links.
 4. Normalize a conservative provider seed from current OpenReceive data, retaining evidence/status metadata and hiding unverified or suspended routes by default. No remote registry at runtime.

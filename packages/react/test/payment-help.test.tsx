@@ -88,12 +88,16 @@ describe("LightningPaymentHelp", () => {
     );
     await user.click(screen.getByRole("button", { name: "How can I pay?" }));
     expect(screen.getByText("This invoice has expired")).toBeVisible();
+    expect(screen.queryByRole("region", { name: "Provider directory" })).not.toBeInTheDocument();
+    expect(screen.queryByText("Phoenix")).not.toBeInTheDocument();
     expect(screen.queryByRole("link", { name: "Open Lightning wallet" })).not.toBeInTheDocument();
 
     await user.click(screen.getByRole("button", { name: "Close payment help" }));
     rerender(<LightningPaymentHelp invoice="data:text/html,bad" trigger="button" />);
     await user.click(screen.getByRole("button", { name: "How can I pay?" }));
     expect(screen.getByRole("alert")).toHaveTextContent("Invoice unavailable");
+    expect(screen.queryByRole("region", { name: "Provider directory" })).not.toBeInTheDocument();
+    expect(screen.queryByText("Phoenix")).not.toBeInTheDocument();
     expect(screen.queryByRole("link", { name: "Open Lightning wallet" })).not.toBeInTheDocument();
   });
 
@@ -113,16 +117,18 @@ describe("LightningPaymentHelp", () => {
   it("discloses affiliate links and emits handed_off rather than payment success", async () => {
     const user = userEvent.setup();
     const onHandoff = vi.fn();
+    const invoice = fakeInvoice();
+    const writeText = vi.fn().mockResolvedValue(undefined);
     Object.defineProperty(navigator, "clipboard", {
       configurable: true,
-      value: { writeText: vi.fn().mockResolvedValue(undefined) }
+      value: { writeText }
     });
     render(
       <LightningPaymentHelp
         affiliateOverrides={{
           phoenix: { url: "https://phoenix.acinq.co/?ref=host", disclosure: "Affiliate link" }
         }}
-        invoice={fakeInvoice()}
+        invoice={invoice}
         now={1_700_000_001}
         onHandoff={onHandoff}
         trigger="button"
@@ -136,6 +142,7 @@ describe("LightningPaymentHelp", () => {
     expect(providerLink).toHaveTextContent("Affiliate link");
 
     await user.click(providerLink);
+    expect(writeText).toHaveBeenCalledWith(invoice);
     expect(onHandoff).toHaveBeenCalledWith({
       status: "handed_off",
       method: "provider_https",

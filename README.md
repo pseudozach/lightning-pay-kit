@@ -18,11 +18,10 @@ or payment processor.
 - Provider destinations are credential-free HTTPS URLs. Named rows say to copy
   the invoice and open instructions/site; they never imply invoice injection.
 
-The metadata reader validates bounded Bech32 encoding/checksum, known network,
-exact `bigint` amount arithmetic, required field cardinality, UTF-8 description,
-and expiry. It is intentionally a display helper, not a full BOLT11 signature
-or payment validator; the receiving wallet and merchant backend remain the
-authorities.
+Before showing provider actions, the package checks bounded Bech32
+encoding/checksum, known network, required field cardinality, and expiry. It is
+not a full BOLT11 signature or payment validator; the receiving wallet and
+merchant backend remain the authorities.
 
 ## Install
 
@@ -126,11 +125,9 @@ for the OpenReceive evaluation.
 
 ## Security and privacy
 
-Invoice and provider text is rendered as text, never injected HTML. Memo display
-removes control/bidirectional formatting characters and is length bounded. Core
-and data imports have no DOM, storage, timer, locale, or network side effects.
-External navigation requires an explicit user click. Automated tests never
-click the wallet URI or provider destinations.
+Provider text is rendered as text, never injected HTML. Core and data imports
+have no DOM, storage, timer, locale, or network side effects. External provider
+navigation requires an explicit user click.
 
 Read [SECURITY.md](SECURITY.md) for the threat model.
 
