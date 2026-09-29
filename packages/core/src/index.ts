@@ -14,10 +14,13 @@ export type {
 export {
   applyAffiliateOverrides,
   defaultProviders,
-  filterProviders
+  filterProviders,
+  providerDatabaseInfo
 } from "./providers.js";
 export { createHandoffEvent } from "./handoff.js";
 export type { HandoffEvent, HandoffMethod } from "./handoff.js";
+export { auditProviderMetadata, collectProviderUrls } from "./provider-audit.js";
+export type { ProviderAuditIssue, ProviderUrl } from "./provider-audit.js";
 export type {
   AffiliateOverride,
   AffiliateOverrides,
@@ -25,6 +28,7 @@ export type {
   ProviderCategory,
   ProviderCustody,
   ProviderFilter,
+  ProviderLightningMode,
   ProviderPlatform,
   ProviderServiceStatus,
   ProviderVerificationStatus,

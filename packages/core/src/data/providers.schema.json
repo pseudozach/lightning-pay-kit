@@ -1,0 +1,291 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/pseudozach/lightning-pay-kit/main/packages/core/src/data/providers.schema.json",
+  "title": "Lightning Pay Kit provider database",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "$schema",
+    "schemaVersion",
+    "updatedAt",
+    "directorySources",
+    "providers"
+  ],
+  "properties": {
+    "$schema": {
+      "const": "./providers.schema.json"
+    },
+    "schemaVersion": {
+      "const": 1
+    },
+    "updatedAt": {
+      "type": "string",
+      "pattern": "^\\d{4}-\\d{2}-\\d{2}$",
+      "format": "date"
+    },
+    "providers": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "$ref": "#/$defs/provider"
+      }
+    },
+    "directorySources": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "$ref": "#/$defs/directorySource"
+      }
+    }
+  },
+  "$defs": {
+    "provider": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "name",
+        "aliases",
+        "capabilitySummary",
+        "lightningModes",
+        "category",
+        "custody",
+        "platforms",
+        "regions",
+        "action",
+        "serviceStatus",
+        "verificationStatus",
+        "lastVerifiedAt",
+        "evidence",
+        "accountRequired",
+        "kycRequired"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$"
+        },
+        "name": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 80
+        },
+        "aliases": {
+          "type": "array",
+          "maxItems": 12,
+          "items": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 40
+          }
+        },
+        "capabilitySummary": {
+          "type": "string",
+          "minLength": 45,
+          "maxLength": 160
+        },
+        "lightningModes": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 4,
+          "uniqueItems": true,
+          "items": {
+            "enum": [
+              "custodial",
+              "embedded_node",
+              "exchange_withdrawal",
+              "historical",
+              "hosted_node",
+              "native_lightning",
+              "remote_node",
+              "spark",
+              "swap",
+              "unknown"
+            ]
+          }
+        },
+        "category": {
+          "enum": [
+            "wallet",
+            "payment_app",
+            "exchange",
+            "swap"
+          ]
+        },
+        "custody": {
+          "enum": [
+            "custodial",
+            "self_custodial",
+            "configurable",
+            "swap_based"
+          ]
+        },
+        "platforms": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {
+            "enum": [
+              "ios",
+              "android",
+              "web",
+              "desktop",
+              "extension"
+            ]
+          }
+        },
+        "regions": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "include": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "pattern": "^[A-Z]{2}$"
+              }
+            },
+            "exclude": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "pattern": "^[A-Z]{2}$"
+              }
+            },
+            "notes": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 240
+            }
+          }
+        },
+        "action": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "type",
+            "url",
+            "label"
+          ],
+          "properties": {
+            "type": {
+              "const": "copy_then_open"
+            },
+            "url": {
+              "$ref": "#/$defs/httpsUrl"
+            },
+            "label": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 140
+            }
+          }
+        },
+        "serviceStatus": {
+          "enum": [
+            "active",
+            "maintenance",
+            "suspended",
+            "retired",
+            "unknown"
+          ]
+        },
+        "verificationStatus": {
+          "enum": [
+            "verified",
+            "needs_reverification",
+            "unverified"
+          ]
+        },
+        "lastVerifiedAt": {
+          "type": "string",
+          "pattern": "^\\d{4}-\\d{2}-\\d{2}$",
+          "format": "date"
+        },
+        "evidence": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "url",
+              "claim",
+              "checkedAt"
+            ],
+            "properties": {
+              "url": {
+                "$ref": "#/$defs/httpsUrl"
+              },
+              "claim": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 300
+              },
+              "checkedAt": {
+                "type": "string",
+                "pattern": "^\\d{4}-\\d{2}-\\d{2}$",
+                "format": "date"
+              }
+            }
+          }
+        },
+        "accountRequired": {
+          "type": "boolean"
+        },
+        "kycRequired": {
+          "type": "boolean"
+        }
+      }
+    },
+    "directorySource": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "name",
+        "url",
+        "lastCheckedAt",
+        "role",
+        "limitations"
+      ],
+      "properties": {
+        "name": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 120
+        },
+        "url": {
+          "$ref": "#/$defs/httpsUrl"
+        },
+        "lastCheckedAt": {
+          "type": "string",
+          "pattern": "^\\d{4}-\\d{2}-\\d{2}$",
+          "format": "date"
+        },
+        "sourceLastUpdatedAt": {
+          "type": "string",
+          "pattern": "^\\d{4}-\\d{2}-\\d{2}$",
+          "format": "date"
+        },
+        "role": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 240
+        },
+        "limitations": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 500
+        }
+      }
+    },
+    "httpsUrl": {
+      "type": "string",
+      "format": "uri",
+      "pattern": "^https://",
+      "not": {
+        "pattern": "^https://[^/]*@"
+      }
+    }
+  }
+}

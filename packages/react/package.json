@@ -1,6 +1,6 @@
 {
   "name": "lightning-pay-kit",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "Accessible React payment-help UI for BOLT11 Lightning invoices.",
   "license": "MIT",
   "repository": {
@@ -20,13 +20,15 @@
       "types": "./dist/index.d.ts",
       "import": "./dist/index.js"
     },
-    "./styles.css": "./dist/styles.css"
+    "./styles.css": "./dist/styles.css",
+    "./providers.json": "./dist/providers.json",
+    "./providers.schema.json": "./dist/providers.schema.json"
   },
   "main": "./dist/index.js",
   "module": "./dist/index.js",
   "types": "./dist/index.d.ts",
   "scripts": {
-    "build": "tsup --config tsup.config.ts && cp src/styles.css dist/styles.css",
+    "build": "tsup --config tsup.config.ts && cp src/styles.css dist/styles.css && cp ../core/src/data/providers.json ../core/src/data/providers.schema.json dist/",
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {

@@ -7,6 +7,19 @@ import { fakeInvoice } from "../../core/test/fixtures.js";
 import { LightningPaymentHelp } from "../src/index.js";
 
 describe("LightningPaymentHelp", () => {
+  it("explains each provider's Lightning mechanism instead of internal taxonomy", async () => {
+    const user = userEvent.setup();
+    render(<LightningPaymentHelp invoice={fakeInvoice()} now={1_700_000_001} trigger="button" />);
+
+    await user.click(screen.getByRole("button", { name: "How can I pay?" }));
+    await user.type(screen.getByRole("searchbox", { name: "Search payment providers" }), "BlueWallet");
+
+    const dialog = screen.getByRole("dialog", { name: "How can I pay?" });
+    expect(within(dialog).getByText(/Arkade.*Lightning swaps.*LNDHub/i)).toBeVisible();
+    expect(within(dialog).queryByText(/^configurable$/i)).not.toBeInTheDocument();
+    expect(within(dialog).queryByText(/open BlueWallet's website/i)).not.toBeInTheDocument();
+  });
+
   it("opens directly to the searchable provider directory without invoice details", async () => {
     const user = userEvent.setup();
     render(<LightningPaymentHelp invoice={fakeInvoice({ createdAt: 1_700_000_000 })} now={1_700_000_001} />);
@@ -34,11 +47,18 @@ describe("LightningPaymentHelp", () => {
 
     await user.type(screen.getByRole("searchbox", { name: "Search payment providers" }), "ACINQ");
     expect(screen.getByText("Phoenix")).toBeVisible();
-    expect(screen.queryByText("FixedFloat")).not.toBeInTheDocument();
+
+    await user.clear(screen.getByRole("searchbox", { name: "Search payment providers" }));
+    await user.type(screen.getByRole("searchbox", { name: "Search payment providers" }), "KuCoin");
+    expect(screen.queryByText("KuCoin")).not.toBeInTheDocument();
+    expect(screen.getByText("No providers match this search.")).toBeVisible();
 
     await user.clear(screen.getByRole("searchbox", { name: "Search payment providers" }));
     await user.click(screen.getByRole("button", { name: "Exchanges" }));
+    expect(screen.getByText("Binance")).toBeVisible();
+    expect(screen.getByText("Coinbase")).toBeVisible();
     expect(screen.getByText("Kraken")).toBeVisible();
+    expect(screen.getByText("River")).toBeVisible();
     expect(screen.queryByText("Phoenix")).not.toBeInTheDocument();
   });
 

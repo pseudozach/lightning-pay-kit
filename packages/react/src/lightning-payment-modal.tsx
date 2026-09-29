@@ -286,11 +286,8 @@ export function LightningPaymentModal({
                                 <span className="lpk-badge">{provider.affiliateDisclosure}</span>
                               ) : null}
                             </span>
-                            <span>{provider.action.label}</span>
-                            <small>
-                              {provider.custody.replace("_", " ")}
-                              {provider.accountRequired ? " · Account required" : ""}
-                            </small>
+                            <span>{provider.capabilitySummary ?? provider.action.label}</span>
+                            {provider.accountRequired ? <small>Account required</small> : null}
                           </span>
                           <span aria-hidden="true" className="lpk-arrow">↗</span>
                         </a>

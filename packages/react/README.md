@@ -37,6 +37,18 @@ Use `trigger="button"` for a text button. Omit it for the compact `?` trigger.
 `LightningPaymentModal`, `useLightningPaymentHelp`, invoice helpers, and provider
 types are also exported.
 
+The reviewed provider database and its schema are available without importing
+React:
+
+```js
+import providers from "lightning-pay-kit/providers.json" with { type: "json" };
+```
+
+Provider records are static package data; the component never fetches a runtime
+registry. See the repository’s
+[provider-data documentation](https://github.com/pseudozach/lightning-pay-kit/blob/main/docs/PROVIDER_DATA.md)
+for evidence rules and raw GitHub URLs.
+
 ## Safety and privacy
 
 - No WebLN, NWC, WalletConnect, automatic payment, or wallet-specific guessed URI.

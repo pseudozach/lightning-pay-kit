@@ -110,13 +110,37 @@ override. Pass a separately reviewed provider in the `providers` prop, then add
 an override under the same provider ID, only when current first-party evidence
 supports it.
 
+## Provider database
+
+The canonical, version-controlled database is
+[`packages/core/src/data/providers.json`](packages/core/src/data/providers.json),
+with a machine-readable
+[JSON Schema](packages/core/src/data/providers.schema.json). Every record includes
+plain-language capability copy, structured Lightning mechanisms, current status,
+review dates, and evidence provenance; every visible verified route is backed by
+current first-party evidence, while hidden research candidates may retain clearly
+identified community discovery sources.
+Consumers can use the raw GitHub file or the npm exports
+`lightning-pay-kit/providers.json` and
+`lightning-pay-kit/providers.schema.json`. The current database retains **58**
+researched records while showing only **30** verified, usable routes; this keeps
+plausible candidates auditable without presenting them as working payment paths.
+See [docs/PROVIDER_DATA.md](docs/PROVIDER_DATA.md) for the evidence model,
+directory assessment, raw URLs, and maintenance policy.
+
+A scheduled GitHub workflow checks every action/evidence link weekly and flags
+records older than 90 days in a review issue. It never rewrites factual claims or
+publishes a provider automatically; evidence changes remain reviewable pull
+requests.
+
 ## Provider policy
 
-The bundled data is a conservative normalized seed, not a live registry.
-Verified active/maintenance records are shown; `needs_reverification`, unknown,
-suspended, and retired records are hidden by default. Coinbase, Binance, and
-FixedFloat are retained as hidden candidates; Boltz is retained as suspended.
-Breez Mobile is visibly marked maintenance.
+The bundled database is conservative and local—there is no runtime registry.
+Verified active/maintenance records are shown; records marked
+`needs_reverification`, unknown, suspended, or retired are hidden by default.
+Every visible card explains how the provider actually pays Lightning (for
+example a custodial balance, embedded or hosted node, remote node, exchange
+withdrawal, or swap) instead of exposing internal taxonomy.
 
 See [CONTRIBUTING.md](CONTRIBUTING.md) for the evidence
 required by a provider submission and

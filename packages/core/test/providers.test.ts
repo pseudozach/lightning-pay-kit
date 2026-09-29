@@ -3,6 +3,7 @@ import {
   applyAffiliateOverrides,
   defaultProviders,
   filterProviders,
+  providerDatabaseInfo,
   type PaymentProvider
 } from "../src/index.js";
 
@@ -34,6 +35,64 @@ const verifiedSwap: PaymentProvider = {
 };
 
 describe("provider directory", () => {
+  it("uses current official destinations and mechanism-focused summaries", () => {
+    const providers = defaultProviders as readonly (PaymentProvider & {
+      capabilitySummary?: string;
+    })[];
+    const aqua = providers.find(({ id }) => id === "aqua");
+    const blueWallet = providers.find(({ id }) => id === "bluewallet");
+
+    expect(aqua?.action.url).toBe("https://aqua.net/");
+    expect(blueWallet?.serviceStatus).toBe("active");
+    expect(blueWallet?.capabilitySummary).toMatch(/Arkade.*Lightning swaps.*LNDHub/i);
+    for (const provider of providers) {
+      expect(provider.capabilitySummary, provider.id).toMatch(/^.{45,160}$/);
+      expect(provider.capabilitySummary, provider.id).not.toMatch(
+        /copy invoice|open .*website|^configurable$/i
+      );
+    }
+  });
+
+  it("covers the researched exchange ecosystem without exposing unverified routes", () => {
+    const visibleIds = filterProviders(defaultProviders, {}).map(({ id }) => id);
+
+    expect(visibleIds).toEqual(
+      expect.arrayContaining([
+        "binance",
+        "bitfinex",
+        "coinbase",
+        "coincorner",
+        "kraken",
+        "lnmarkets",
+        "nicehash",
+        "river"
+      ])
+    );
+    expect(defaultProviders.length).toBeGreaterThanOrEqual(35);
+    expect(
+      filterProviders(defaultProviders, { category: "exchange" }).length
+    ).toBeGreaterThanOrEqual(10);
+    expect(visibleIds).not.toEqual(expect.arrayContaining(["bitget", "bitso", "kucoin"]));
+    expect(defaultProviders.map(({ id }) => id)).toEqual(
+      expect.arrayContaining(["bitget", "bitso", "kucoin"])
+    );
+    expect(providerDatabaseInfo.directorySources.map(({ url }) => url)).toEqual(
+      expect.arrayContaining([
+        "https://github.com/theDavidCoen/LightningExchanges",
+        "https://github.com/cointastical/Exchanges-With-LN"
+      ])
+    );
+  });
+
+  it("searches the human summary and structured Lightning mechanism", () => {
+    expect(filterProviders(defaultProviders, { query: "LSP" }).map(({ id }) => id)).toEqual(
+      expect.arrayContaining(["blixt", "breez"])
+    );
+    expect(
+      filterProviders(defaultProviders, { query: "exchange withdrawal" }).length
+    ).toBeGreaterThan(0);
+  });
+
   it("rejects unsafe destinations and unknown metadata", () => {
     const unsafeRecords = [
       { ...verifiedSwap, action: { ...verifiedSwap.action, url: "javascript:alert(1)" } },
@@ -55,7 +114,7 @@ describe("provider directory", () => {
       )
     ).toBe(true);
     expect(filterProviders(defaultProviders, {}).map(({ id }) => id)).not.toContain("boltz");
-    expect(filterProviders(defaultProviders, {}).map(({ id }) => id)).not.toContain("fixedfloat");
+    expect(filterProviders(defaultProviders, {}).map(({ id }) => id)).toContain("fixedfloat");
   });
 
   it("filters runtime provider input through the HTTPS schema", () => {

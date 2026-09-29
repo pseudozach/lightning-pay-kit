@@ -6,6 +6,8 @@
   "packageManager": "pnpm@11.4.0",
   "scripts": {
     "build": "pnpm -r --if-present build",
+    "audit:providers": "pnpm --filter @lightning-pay-kit/core build && node scripts/audit-provider-directory.mjs --strict",
+    "check:provider-data": "pnpm --filter @lightning-pay-kit/core build && node scripts/audit-provider-directory.mjs --metadata-only --strict",
     "check:network": "playwright test e2e/network.spec.ts",
     "check:package": "node scripts/check-package.mjs",
     "check:react17-next12": "node scripts/check-react17-next12.mjs",
