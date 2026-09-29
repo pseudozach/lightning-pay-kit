@@ -25,17 +25,17 @@ merchant backend remain the authorities.
 
 ## Install
 
-The package is not published yet. Inside this workspace:
+Install the published package from npm:
+
+```bash
+npm install lightning-pay-kit
+```
+
+For workspace development:
 
 ```sh
 pnpm install
 pnpm build
-```
-
-For an eventual npm installation:
-
-```bash
-npm install lightning-pay-kit
 ```
 
 Peer support: React and React DOM 17, 18, or 19. The package uses no React 18-only
