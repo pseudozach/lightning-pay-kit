@@ -3,6 +3,7 @@ import { fileURLToPath, URL } from "node:url";
 import { defineConfig } from "vite";
 
 export default defineConfig({
+  base: "/lightning-pay-kit/",
   plugins: [react()],
   resolve: {
     alias: [

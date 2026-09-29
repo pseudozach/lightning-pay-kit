@@ -3,6 +3,7 @@ import {
   createHandoffEvent,
   defaultProviders,
   filterProviders,
+  getProviderRegionPresentation,
   parseInvoiceMetadata,
   type AffiliateOverrides,
   type HandoffEvent,
@@ -85,6 +86,7 @@ export function LightningPaymentModal({
   title = "How can I pay?"
 }: LightningPaymentModalProps): ReactElement | null {
   const dialogRef = useRef<HTMLDivElement>(null);
+  const searchInputRef = useRef<HTMLInputElement>(null);
   const previousFocusRef = useRef<HTMLElement | null>(null);
   const [query, setQuery] = useState("");
   const [category, setCategory] = useState<Category>("all");
@@ -177,6 +179,11 @@ export function LightningPaymentModal({
     if (event.target === event.currentTarget) onClose();
   };
 
+  const clearSearch = () => {
+    setQuery("");
+    searchInputRef.current?.focus();
+  };
+
   const copyForProvider = (providerId: string) => {
     if (normalizedInvoice && navigator.clipboard?.writeText) {
       void navigator.clipboard.writeText(normalizedInvoice).then(
@@ -230,16 +237,26 @@ export function LightningPaymentModal({
               <section aria-label="Provider directory" className="lpk-directory">
                 <div className="lpk-directory-heading">
                   <h3>Provider directory</h3>
-                  <label className="lpk-search">
-                    <span className="lpk-sr-only">Search payment providers</span>
+                  <div className="lpk-search">
                     <input
                       aria-label="Search payment providers"
                       onChange={(event) => setQuery(event.currentTarget.value)}
-                      placeholder="Search wallets, apps, exchanges…"
+                      placeholder="Search apps, exchanges, or country…"
+                      ref={searchInputRef}
                       type="search"
                       value={query}
                     />
-                  </label>
+                    {query ? (
+                      <button
+                        aria-label="Clear provider search"
+                        className="lpk-search-clear"
+                        onClick={clearSearch}
+                        type="button"
+                      >
+                        <span aria-hidden="true">×</span>
+                      </button>
+                    ) : null}
+                  </div>
                 </div>
 
                 <div aria-label="Provider categories" className="lpk-categories">
@@ -259,40 +276,49 @@ export function LightningPaymentModal({
                 {visibleProviders.length === 0 ? (
                   <p className="lpk-empty">No providers match this search.</p>
                 ) : (
-                  <ul className="lpk-provider-grid">
-                    {visibleProviders.map((provider) => (
-                      <li key={provider.id}>
-                        <a
-                          className="lpk-provider"
-                          href={provider.destinationUrl}
-                          onClick={() => copyForProvider(provider.id)}
-                          rel={
-                            provider.affiliateDisclosure
-                              ? "sponsored noopener noreferrer"
-                              : "noopener noreferrer"
-                          }
-                          target="_blank"
-                        >
-                          <span aria-hidden="true" className="lpk-provider-mark">
-                            {initials(provider.name)}
-                          </span>
-                          <span className="lpk-provider-copy">
-                            <span className="lpk-provider-title">
-                              <strong>{provider.name}</strong>
-                              {provider.serviceStatus === "maintenance" ? (
-                                <span className="lpk-badge lpk-badge-warning">Maintenance</span>
-                              ) : null}
-                              {provider.affiliateDisclosure ? (
-                                <span className="lpk-badge">{provider.affiliateDisclosure}</span>
-                              ) : null}
+                  <ul aria-label="Matching payment providers" className="lpk-provider-grid">
+                    {visibleProviders.map((provider) => {
+                      const region = getProviderRegionPresentation(provider, query);
+                      return (
+                        <li key={provider.id}>
+                          <a
+                            className="lpk-provider"
+                            href={provider.destinationUrl}
+                            onClick={() => copyForProvider(provider.id)}
+                            rel={
+                              provider.affiliateDisclosure
+                                ? "sponsored noopener noreferrer"
+                                : "noopener noreferrer"
+                            }
+                            target="_blank"
+                          >
+                            <span aria-hidden="true" className="lpk-provider-mark">
+                              {initials(provider.name)}
                             </span>
-                            <span>{provider.capabilitySummary ?? provider.action.label}</span>
-                            {provider.accountRequired ? <small>Account required</small> : null}
-                          </span>
-                          <span aria-hidden="true" className="lpk-arrow">↗</span>
-                        </a>
-                      </li>
-                    ))}
+                            <span className="lpk-provider-copy">
+                              <span className="lpk-provider-title">
+                                <strong>{provider.name}</strong>
+                                {provider.serviceStatus === "maintenance" ? (
+                                  <span className="lpk-badge lpk-badge-warning">Maintenance</span>
+                                ) : null}
+                                {provider.affiliateDisclosure ? (
+                                  <span className="lpk-badge">{provider.affiliateDisclosure}</span>
+                                ) : null}
+                              </span>
+                              <span>{provider.capabilitySummary ?? provider.action.label}</span>
+                              <span className="lpk-provider-meta">
+                                <small aria-label={region.label} className="lpk-region">
+                                  <span aria-hidden="true">{region.flags}</span>
+                                  {region.label}
+                                </small>
+                                {provider.accountRequired ? <small>Account required</small> : null}
+                              </span>
+                            </span>
+                            <span aria-hidden="true" className="lpk-arrow">↗</span>
+                          </a>
+                        </li>
+                      );
+                    })}
                   </ul>
                 )}
               </section>
@@ -301,6 +327,15 @@ export function LightningPaymentModal({
             </div>
           </>
         ) : null}
+        <footer className="lpk-footer">
+          <a
+            href="https://github.com/pseudozach/lightning-pay-kit"
+            rel="noopener noreferrer"
+            target="_blank"
+          >
+            Use this Bitcoin Lightning payment helper on your site <span aria-hidden="true">↗</span>
+          </a>
+        </footer>
       </div>
     </div>
   );

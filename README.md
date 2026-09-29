@@ -3,7 +3,11 @@
 A small React component that sits beside a BOLT11 invoice and answers one
 question: **How can I pay?**
 
-It offers a searchable directory of wallets, payment apps, exchanges, and any
+[Live demo](https://pseudozach.github.io/lightning-pay-kit/) · [npm](https://www.npmjs.com/package/lightning-pay-kit) · [Contributing](CONTRIBUTING.md)
+
+![Lightning Pay Kit provider directory](docs/assets/lightning-pay-kit-preview.png)
+
+It offers a searchable, country-aware directory of wallets, payment apps, exchanges, and any
 independently verified swap routes. It is deliberately not a wallet connector
 or payment processor.
 
@@ -99,16 +103,32 @@ Core helpers and provider types are re-exported from `lightning-pay-kit`. The
 workspace core package is private implementation structure and is not required
 or published separately.
 
-## Affiliate overrides
+## Affiliate configuration
 
-Affiliate URLs are host configuration, never bundled defaults. The URL must be
-HTTPS, its disclosure is shown before the click, and rendered links receive
-`rel="sponsored noopener noreferrer"`. Overrides replace only the destination
-of the matching record and cannot affect directory filtering or organic order.
-Hosts cannot make an unverified bundled provider visible by adding an affiliate
-override. Pass a separately reviewed provider in the `providers` prop, then add
-an override under the same provider ID, only when current first-party evidence
-supports it.
+The bundled FixedFloat route uses the disclosed default destination
+`https://ff.io/?ref=pmdxabka`. It renders an `Affiliate` badge and
+`rel="sponsored noopener noreferrer"`; it does not affect filtering, visibility,
+or organic order.
+
+Replace the destination—or opt out and use FixedFloat's plain URL—with host
+configuration:
+
+```tsx
+<LightningPaymentHelp
+  invoice={invoice}
+  affiliateOverrides={{
+    fixedfloat: {
+      url: "https://ff.io/?ref=your-code",
+      disclosure: "Affiliate",
+    },
+    // Use `fixedfloat: null` instead to disable the bundled referral.
+  }}
+/>
+```
+
+All affiliate destinations must be credential-free HTTPS URLs. Overrides replace
+only the destination of the matching record and cannot make an unverified
+provider visible.
 
 ## Provider database
 
@@ -122,9 +142,11 @@ current first-party evidence, while hidden research candidates may retain clearl
 identified community discovery sources.
 Consumers can use the raw GitHub file or the npm exports
 `lightning-pay-kit/providers.json` and
-`lightning-pay-kit/providers.schema.json`. The current database retains **58**
-researched records while showing only **30** verified, usable routes; this keeps
-plausible candidates auditable without presenting them as working payment paths.
+`lightning-pay-kit/providers.schema.json`. The current database retains **59**
+researched records while showing only **30** verified, usable routes. Country
+searches prioritize explicitly local providers, include available global
+providers, and respect structured exclusions; this keeps plausible candidates
+auditable without presenting them as working payment paths.
 See [docs/PROVIDER_DATA.md](docs/PROVIDER_DATA.md) for the evidence model,
 directory assessment, raw URLs, and maintenance policy.
 
@@ -146,6 +168,13 @@ See [CONTRIBUTING.md](CONTRIBUTING.md) for the evidence
 required by a provider submission and
 [docs/DEPENDENCY_DECISIONS.md](docs/DEPENDENCY_DECISIONS.md)
 for the OpenReceive evaluation.
+
+## Contributing
+
+Pull requests are welcome to add, remove, verify, or improve database records,
+and to improve the package, tests, documentation, and accessibility. Provider
+changes should include current first-party evidence and preserve the fail-closed
+visibility policy.
 
 ## Security and privacy
 
@@ -170,6 +199,11 @@ pnpm e2e
 
 The Playwright suite covers a 320 px mobile sheet and 1280 px desktop dialog,
 focus/Escape behavior, axe, and unexpected runtime requests.
+
+> **Referral note:** If a host does not replace or disable the bundled FixedFloat
+> referral, the original project developer may earn referral rewards. FixedFloat
+> controls its own rates and fees. This never affects provider visibility or
+> ranking.
 
 ## License
 

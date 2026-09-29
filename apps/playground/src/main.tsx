@@ -5,27 +5,37 @@ import "lightning-pay-kit/styles.css";
 import "./playground.css";
 
 // Synthetic regtest-format fixture with a fake signature. It cannot be paid.
-const invoice = "lnbcrt25u1pmnt9qqpp5qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqsp5ppppppppppppppppppppppppppppppppppppppppppppppppppppdzq2dx4xdznv968xgryv4kk7gpdypehjmn5dpjhg6tr9ssxuetkv4ezqurp09skymr9xqrrssqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqn3n0v0";
+const invoice = "lnbcrt25u1pj48ugqpp5qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqsp5ppppppppppppppppppppppppppppppppppppppppppppppppppppdpy2dukuargv46xjceqv3jk6meqd9h8vmmfvdjsqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqm5chdv";
+
+const repositoryUrl = "https://github.com/pseudozach/lightning-pay-kit";
 
 export function App() {
   return (
     <main>
-      <nav aria-label="Playground navigation" className="site-nav">
+      <nav aria-label="Primary navigation" className="site-nav">
         <a className="brand" href="#top">
           <span aria-hidden="true" className="brand-mark">ϟ</span>
           Lightning Pay Kit
         </a>
-        <span className="version">v0.1 preview</span>
+        <div className="nav-links">
+          <a href="#install">Get started</a>
+          <a href={repositoryUrl}>GitHub</a>
+          <span className="version">v0.1.3</span>
+        </div>
       </nav>
 
       <section className="hero" id="top">
         <div className="hero-copy">
-          <p className="kicker">A small answer to a common question</p>
-          <h1>How can I pay this <em>invoice?</em></h1>
+          <p className="kicker">Open-source Lightning payment help</p>
+          <h1>Help anyone pay a <em>Lightning invoice.</em></h1>
           <p className="lede">
-            A lightweight React helper for honest Lightning handoffs—one canonical wallet action,
-            local QR and copy, plus a searchable directory of places to continue.
+            A lightweight React component with a verified directory of wallets, payment apps,
+            exchanges, and swaps—searchable by provider or country.
           </p>
+          <div className="hero-actions">
+            <a className="primary-action" href="#demo">Try the component</a>
+            <a className="secondary-action" href={repositoryUrl}>View on GitHub ↗</a>
+          </div>
           <div className="principles" aria-label="Product principles">
             <span>No connections</span>
             <span>No telemetry</span>
@@ -33,10 +43,10 @@ export function App() {
           </div>
         </div>
 
-        <article className="invoice-card" aria-label="Synthetic invoice example">
+        <article className="invoice-card" id="demo" aria-label="Synthetic invoice example">
           <div className="invoice-card-topline">
-            <span>SMS4Sats</span>
-            <span className="fake-label">Synthetic fixture</span>
+            <span>Live component</span>
+            <span className="fake-label">Safe synthetic invoice</span>
           </div>
           <p className="invoice-purpose">Send a text message</p>
           <div className="amount-row">
@@ -47,23 +57,41 @@ export function App() {
           <div className="help-row">
             <div>
               <strong>Need help paying?</strong>
-              <span>Browse wallets, apps, exchanges and fallbacks.</span>
+              <span>Search by wallet, exchange, or country.</span>
             </div>
-            <LightningPaymentHelp invoice={invoice} now={2_000_000_001} />
+            <LightningPaymentHelp invoice={invoice} now={1_700_000_001} trigger="button" />
           </div>
         </article>
       </section>
 
-      <section className="integration" aria-labelledby="integration-title">
-        <div>
-          <p className="kicker">SMS4Sats-ready</p>
-          <h2 id="integration-title">Pass the invoice you already have.</h2>
+      <section className="showcase" aria-labelledby="showcase-title">
+        <div className="showcase-heading">
+          <p className="kicker">Provider-first by design</p>
+          <h2 id="showcase-title">The shortest path from invoice to a useful option.</h2>
           <p>
-            No provider setup, browser globals at import time, or framework server API. Import the
-            static stylesheet once and place the compact helper beside the existing invoice UI.
+            Country-aware search prioritizes local services while keeping genuinely global apps
+            visible. Every card explains its Lightning mechanism and availability.
           </p>
         </div>
-        <pre aria-label="SMS4Sats React integration example"><code>{`import { LightningPaymentHelp } from "lightning-pay-kit";
+        <div className="screenshot-frame">
+          <img
+            alt="Lightning Pay Kit provider directory showing country availability"
+            src={`${import.meta.env.BASE_URL}lightning-pay-kit-preview.png`}
+          />
+        </div>
+      </section>
+
+      <section className="integration" id="install" aria-labelledby="integration-title">
+        <div>
+          <p className="kicker">Get started</p>
+          <h2 id="integration-title">One package. One invoice prop.</h2>
+          <p>
+            React 17–19 and Next.js 12 compatible. Import the static stylesheet once and place the
+            helper beside the invoice you already render.
+          </p>
+          <pre aria-label="npm installation command"><code>npm install lightning-pay-kit</code></pre>
+        </div>
+        <pre aria-label="React integration example"><code>{`import { LightningPaymentHelp } from "lightning-pay-kit";
 import "lightning-pay-kit/styles.css";
 
 <LightningPaymentHelp
@@ -72,9 +100,21 @@ import "lightning-pay-kit/styles.css";
 />`}</code></pre>
       </section>
 
-      <footer>
-        <span>Local demo only. No payment or app is launched automatically.</span>
+      <section className="contribute" aria-labelledby="contribute-title">
+        <p className="kicker">Community maintained</p>
+        <h2 id="contribute-title">Help keep the directory honest.</h2>
+        <p>
+          Pull requests are welcome to add, remove, verify, or improve provider records—and to
+          improve the package itself. Visible payment routes require current first-party evidence.
+        </p>
+        <a className="secondary-action" href={`${repositoryUrl}/blob/main/CONTRIBUTING.md`}>
+          Read the contribution guide ↗
+        </a>
+      </section>
+
+      <footer className="site-footer">
         <span>MIT source · Provider marks excluded</span>
+        <span>Built by <a href="https://pseudozach.com">pseudozach</a></span>
       </footer>
     </main>
   );

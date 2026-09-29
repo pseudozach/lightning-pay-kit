@@ -1,0 +1,38 @@
+# Lightning Pay Kit
+
+> Open-source React payment-help UI for BOLT11 Bitcoin Lightning invoices.
+
+Lightning Pay Kit gives users a searchable, evidence-backed directory of wallets, payment apps, exchanges, and swaps that can pay a Lightning invoice. Country searches prioritize explicitly local providers and include available global providers.
+
+## Links
+
+- Website: https://pseudozach.github.io/lightning-pay-kit/
+- Source: https://github.com/pseudozach/lightning-pay-kit
+- npm: https://www.npmjs.com/package/lightning-pay-kit
+- Provider data policy: https://github.com/pseudozach/lightning-pay-kit/blob/main/docs/PROVIDER_DATA.md
+- Contributing: https://github.com/pseudozach/lightning-pay-kit/blob/main/CONTRIBUTING.md
+
+## Install
+
+npm install lightning-pay-kit
+
+## Minimal integration
+
+```tsx
+import { LightningPaymentHelp } from "lightning-pay-kit";
+import "lightning-pay-kit/styles.css";
+
+<LightningPaymentHelp invoice={invoice} trigger="button" />
+```
+
+## Safety model
+
+- Handoff never proves payment; the merchant backend remains settlement authority.
+- Provider actions are explicit HTTPS navigation after copying the invoice.
+- No telemetry, runtime registry, project-controlled service, or automatic payment.
+- Visible providers require current evidence and eligible service status.
+- FixedFloat uses a disclosed default affiliate destination; hosts may replace it or disable it with `affiliateOverrides={{ fixedfloat: null }}`.
+
+## Agent guidance
+
+Read the repository's AGENTS.md before editing. Provider changes belong in `packages/core/src/data/providers.json`, require current first-party evidence, and must pass every documented verification gate. Pull requests to add, remove, verify, or improve the database and package are welcome.

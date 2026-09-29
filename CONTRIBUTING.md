@@ -1,5 +1,10 @@
 # Contributing
 
+Pull requests are welcome to add, remove, re-verify, or improve provider records,
+fix country availability, improve tests and accessibility, or strengthen the
+library and website themselves. If removing or downgrading a provider, include
+the first-party evidence that supports the change.
+
 Use Node 22 and pnpm. Every behavior change follows RED→GREEN→REFACTOR: add a
 focused test, run it and confirm the intended failure, implement the smallest
 change, then rerun it before the complete gate.

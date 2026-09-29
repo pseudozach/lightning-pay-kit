@@ -8,8 +8,13 @@ test("is usable, responsive, keyboard-safe, and accessible", async ({ page }, te
     if (url.origin !== "http://127.0.0.1:4173") externalRequests.push(request.url());
   });
 
-  await page.goto("/");
-  const trigger = page.getByRole("button", { name: "How can I pay this Lightning invoice?" });
+  await page.goto("/lightning-pay-kit/");
+  expect(
+    await page.evaluate(
+      () => document.documentElement.scrollWidth <= document.documentElement.clientWidth
+    )
+  ).toBe(true);
+  const trigger = page.getByRole("button", { name: "How can I pay?", exact: true });
   await trigger.focus();
   await trigger.click();
 
@@ -17,7 +22,14 @@ test("is usable, responsive, keyboard-safe, and accessible", async ({ page }, te
   await expect(dialog).toBeVisible();
   await expect(page.getByRole("button", { name: "Close payment help" })).toBeFocused();
   await expect(dialog.getByRole("heading", { name: "Provider directory" })).toBeVisible();
-  await expect(dialog.getByRole("searchbox", { name: "Search payment providers" })).toBeVisible();
+  const search = dialog.getByRole("searchbox", { name: "Search payment providers" });
+  await expect(search).toBeVisible();
+  await search.fill("ACINQ");
+  const clear = dialog.getByRole("button", { name: "Clear provider search" });
+  await clear.focus();
+  await page.keyboard.press("Enter");
+  await expect(search).toHaveValue("");
+  await expect(search).toBeFocused();
   await expect(dialog.getByLabel("Lightning invoice QR code")).toHaveCount(0);
   await expect(dialog.getByLabel("Lightning invoice text")).toHaveCount(0);
 
@@ -48,14 +60,14 @@ test("opens and closes without strict-CSP inline-style violations", async ({ pag
     }
   });
 
-  await page.goto("/");
+  await page.goto("/lightning-pay-kit/");
   await page.evaluate(() => {
     const policy = document.createElement("meta");
     policy.httpEquiv = "Content-Security-Policy";
     policy.content = "default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:; connect-src 'self' ws:";
     document.head.append(policy);
   });
-  await page.getByRole("button", { name: "How can I pay this Lightning invoice?" }).click();
+  await page.getByRole("button", { name: "How can I pay?", exact: true }).click();
   await expect(page.locator("body")).toHaveClass(/lpk-scroll-lock/);
   await expect(page.locator("body")).not.toHaveAttribute("style", /overflow/);
   await page.getByRole("button", { name: "Close payment help" }).click();

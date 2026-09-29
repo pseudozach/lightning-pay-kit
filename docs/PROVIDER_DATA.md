@@ -29,6 +29,32 @@ Other records remain in the public database as research candidates or current ne
 
 `capabilitySummary` is user-facing text explaining the actual payment mechanism or withdrawal flow. `lightningModes` is machine-readable classification. `evidence` records the direct source used for the status and claim.
 
+## Country availability
+
+`regions.scope` distinguishes verified global software/services,
+country-specific services, broadly available services with known exclusions, and
+unknown/variable availability. `regions.include` is an ISO 3166-1 alpha-2
+allowlist for country-specific services; `regions.exclude` identifies known
+exclusions for broadly available services. The optional `regions.label` supplies
+compact user-facing wording such as `Philippines only`, `Europe`, or
+`Availability varies`.
+
+An exact country-name, alpha-2, or alpha-3 search becomes an availability filter:
+explicitly local services rank first, then verified global services and eligible
+services with complete exclusions. Providers with a nonmatching allowlist,
+matching exclusion, or unknown availability are omitted. Country metadata
+must be backed by current first-party evidence; do not equate app-store presence
+with service availability.
+
+Region shapes are discriminated and fail closed: `country_specific` requires a
+nonempty, unique `include` list; `global_with_exclusions` requires a nonempty,
+unique `exclude` list; and `global` or `unknown` cannot carry either list. Codes
+must exist in the bundled maintained country table. Open-ended legal or
+third-party restrictions are `unknown`, not an incomplete exclusion list.
+
+Flags are generated locally from ISO codes using Unicode regional indicators.
+No flag images, remote assets, or icon dependency are loaded.
+
 ## Discovery directories
 
 The database records each discovery source and its limitations in `directorySources`. The current research used the sources below; the [exchange research snapshot](EXCHANGE_RESEARCH.md) records which candidates were shown, hidden, or rejected and why.

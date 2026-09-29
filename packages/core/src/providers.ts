@@ -1,9 +1,15 @@
 import { z } from "zod";
+import { countryFlag, countryName, isIsoCountryCode, resolveCountryQuery } from "./countries.js";
 import providerDatabase from "./data/providers.json";
 
 export type ProviderCategory = "wallet" | "payment_app" | "exchange" | "swap";
 export type ProviderCustody = "custodial" | "self_custodial" | "configurable" | "swap_based";
 export type ProviderPlatform = "ios" | "android" | "web" | "desktop" | "extension";
+export type ProviderRegionScope =
+  | "global"
+  | "country_specific"
+  | "global_with_exclusions"
+  | "unknown";
 export type ProviderServiceStatus = "active" | "maintenance" | "suspended" | "retired" | "unknown";
 export type ProviderVerificationStatus = "verified" | "needs_reverification" | "unverified";
 export type ProviderLightningMode =
@@ -30,8 +36,10 @@ export interface PaymentProvider {
   readonly custody: ProviderCustody;
   readonly platforms: readonly ProviderPlatform[];
   readonly regions: {
+    readonly scope?: ProviderRegionScope | undefined;
     readonly include?: readonly string[] | undefined;
     readonly exclude?: readonly string[] | undefined;
+    readonly label?: string | undefined;
     readonly notes?: string | undefined;
   };
   readonly action: {
@@ -62,12 +70,24 @@ export interface AffiliateOverride {
   readonly disclosure: string;
 }
 
-export type AffiliateOverrides = Readonly<Record<string, AffiliateOverride>>;
+export type AffiliateOverrides = Readonly<Record<string, AffiliateOverride | null>>;
 
 export interface ProviderView extends PaymentProvider {
   readonly destinationUrl: string;
   readonly affiliateDisclosure?: string;
 }
+
+export interface ProviderRegionPresentation {
+  readonly flags: string;
+  readonly label: string;
+}
+
+export const defaultAffiliateOverrides: AffiliateOverrides = Object.freeze({
+  fixedfloat: Object.freeze({
+    url: "https://ff.io/?ref=pmdxabka",
+    disclosure: "Affiliate"
+  })
+});
 
 const dateSchema = z
   .string()
@@ -99,6 +119,38 @@ const httpsUrlSchema = z.string().superRefine((value, context) => {
   }
 });
 
+const countryCodesSchema = z
+  .array(z.string().refine(isIsoCountryCode, "Use a maintained ISO 3166-1 alpha-2 country code."))
+  .min(1)
+  .max(250)
+  .refine((codes) => new Set(codes).size === codes.length, "Country codes must be unique.");
+
+const regionsSchema = z
+  .object({
+    scope: z.enum(["global", "country_specific", "global_with_exclusions", "unknown"]).optional(),
+    include: countryCodesSchema.optional(),
+    exclude: countryCodesSchema.optional(),
+    label: z.string().trim().min(1).max(50).optional(),
+    notes: z.string().trim().min(1).max(240).optional()
+  })
+  .strict()
+  .superRefine((regions, context) => {
+    const issue = (path: "include" | "exclude", message: string) =>
+      context.addIssue({ code: "custom", path: [path], message });
+    if (regions.scope === "country_specific") {
+      if (!regions.include) issue("include", "Country-specific scope requires a nonempty include list.");
+      if (regions.exclude) issue("exclude", "Country-specific scope cannot define exclusions.");
+      return;
+    }
+    if (regions.scope === "global_with_exclusions") {
+      if (!regions.exclude) issue("exclude", "Global-with-exclusions scope requires a nonempty exclude list.");
+      if (regions.include) issue("include", "Global-with-exclusions scope cannot define an include list.");
+      return;
+    }
+    if (regions.include) issue("include", "Include lists are valid only for country-specific scope.");
+    if (regions.exclude) issue("exclude", "Exclusion lists are valid only for global-with-exclusions scope.");
+  });
+
 const providerSchema = z
   .object({
     id: z.string().regex(/^[a-z0-9]+(?:-[a-z0-9]+)*$/),
@@ -109,13 +161,7 @@ const providerSchema = z
     category: z.enum(["wallet", "payment_app", "exchange", "swap"]),
     custody: z.enum(["custodial", "self_custodial", "configurable", "swap_based"]),
     platforms: z.array(z.enum(["ios", "android", "web", "desktop", "extension"])).min(1),
-    regions: z
-      .object({
-        include: z.array(z.string().regex(/^[A-Z]{2}$/)).optional(),
-        exclude: z.array(z.string().regex(/^[A-Z]{2}$/)).optional(),
-        notes: z.string().trim().min(1).max(240).optional()
-      })
-      .strict(),
+    regions: regionsSchema,
     action: z
       .object({
         type: z.literal("copy_then_open"),
@@ -189,6 +235,7 @@ export function filterProviders(
   filter: ProviderFilter
 ): PaymentProvider[] {
   const query = filter.query?.trim().toLowerCase() ?? "";
+  const countryCode = resolveCountryQuery(query);
   const validatedProviders = providers.flatMap((item) => {
     const parsed = providerSchema.safeParse(item);
     return parsed.success ? [parsed.data] : [];
@@ -200,6 +247,14 @@ export function filterProviders(
         if (!["active", "maintenance"].includes(item.serviceStatus)) return false;
       }
       if (filter.category && filter.category !== "all" && item.category !== filter.category) {
+        return false;
+      }
+      if (countryCode) {
+        if (item.regions.include?.length) return item.regions.include.includes(countryCode);
+        if (item.regions.scope === "global") return true;
+        if (item.regions.scope === "global_with_exclusions") {
+          return !item.regions.exclude?.includes(countryCode);
+        }
         return false;
       }
       if (query.length > 0) {
@@ -218,7 +273,43 @@ export function filterProviders(
       }
       return true;
     })
-    .sort(compareProviderNames);
+    .sort((left, right) => {
+      if (countryCode) {
+        const leftLocal = left.regions.include?.includes(countryCode) ? 0 : 1;
+        const rightLocal = right.regions.include?.includes(countryCode) ? 0 : 1;
+        if (leftLocal !== rightLocal) return leftLocal - rightLocal;
+      }
+      return compareProviderNames(left, right);
+    });
+}
+
+export function getProviderRegionPresentation(
+  provider: PaymentProvider,
+  countryQuery = ""
+): ProviderRegionPresentation {
+  const included = provider.regions.include ?? [];
+  if (included.length > 0) {
+    const matchedCountry = resolveCountryQuery(countryQuery);
+    const displayed = matchedCountry && included.includes(matchedCountry) ? [matchedCountry] : included.slice(0, 3);
+    return {
+      flags: displayed.map(countryFlag).join(" "),
+      label:
+        provider.regions.label ??
+        (included.length === 1
+          ? `${countryName(included[0] ?? "")} only`
+          : `${String(included.length)} countries`)
+    };
+  }
+  if (provider.regions.scope === "global") {
+    return { flags: "🌍", label: provider.regions.label ?? "Global" };
+  }
+  if (provider.regions.scope === "global_with_exclusions") {
+    return { flags: "🌍", label: provider.regions.label ?? "Most countries" };
+  }
+  return {
+    flags: "◌",
+    label: provider.regions.label ?? "Availability varies"
+  };
 }
 
 const affiliateOverrideSchema = z
@@ -233,8 +324,15 @@ export function applyAffiliateOverrides(
   overrides: AffiliateOverrides = {}
 ): ProviderView[] {
   return providers.map((item) => {
-    const override = overrides[item.id];
-    if (!override) return { ...item, destinationUrl: item.action.url };
+    const hasHostOverride = Object.prototype.hasOwnProperty.call(overrides, item.id);
+    const bundledDefault =
+      item.id === "fixedfloat" && item.action.url === "https://ff.io/"
+        ? defaultAffiliateOverrides.fixedfloat
+        : undefined;
+    const override = hasHostOverride ? overrides[item.id] : bundledDefault;
+    if (override === null || override === undefined) {
+      return { ...item, destinationUrl: item.action.url };
+    }
     const safeOverride = affiliateOverrideSchema.parse(override);
     return {
       ...item,

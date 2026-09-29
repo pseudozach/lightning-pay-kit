@@ -1,8 +1,8 @@
 # lightning-pay-kit
 
 Accessible React payment-help UI for BOLT11 Lightning invoices. It provides a
-compact `?` or “How can I pay?” trigger and a conservative searchable provider
-directory.
+compact `?` or “How can I pay?” trigger and a conservative provider directory
+searchable by wallet, app, exchange, or country.
 
 It is **not** a wallet connector or payment processor. A provider-page visit is
 only a handoff and never proves payment.
@@ -55,7 +55,8 @@ for evidence rules and raw GitHub URLs.
 - No runtime telemetry, provider fetch, remote image, or project-server request.
 - Invoice parsing, search, and filtering are local.
 - Runtime provider records and affiliate overrides require safe HTTPS URLs.
-- Provider affiliate overrides are visibly disclosed and cannot alter ranking.
+- FixedFloat uses a visible default affiliate link that hosts can replace or disable with
+  `affiliateOverrides={{ fixedfloat: null }}`; affiliation cannot alter ranking.
 - Settlement must continue to come from the merchant backend.
 
 MIT licensed. Provider names and trademarks remain their owners’ property; no

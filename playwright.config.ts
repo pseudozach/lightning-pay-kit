@@ -24,7 +24,7 @@ export default defineConfig({
     }
   ],
   webServer: {
-    command: "pnpm --filter @lightning-pay-kit/playground dev --host 127.0.0.1 --port 4173",
+    command: "pnpm --filter @lightning-pay-kit/playground build && pnpm --filter @lightning-pay-kit/playground preview --host 127.0.0.1 --port 4173",
     url: "http://127.0.0.1:4173",
     reuseExistingServer: false,
     timeout: 60_000

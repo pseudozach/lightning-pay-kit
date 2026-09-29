@@ -13,8 +13,10 @@ export type {
 } from "./invoice.js";
 export {
   applyAffiliateOverrides,
+  defaultAffiliateOverrides,
   defaultProviders,
   filterProviders,
+  getProviderRegionPresentation,
   providerDatabaseInfo
 } from "./providers.js";
 export { createHandoffEvent } from "./handoff.js";
@@ -30,6 +32,8 @@ export type {
   ProviderFilter,
   ProviderLightningMode,
   ProviderPlatform,
+  ProviderRegionPresentation,
+  ProviderRegionScope,
   ProviderServiceStatus,
   ProviderVerificationStatus,
   ProviderView

@@ -40,20 +40,39 @@ describe("LightningPaymentHelp", () => {
     expect(within(dialog).queryByText("Where to continue")).not.toBeInTheDocument();
   });
 
-  it("searches aliases and categories without exposing unverified routes", async () => {
+  it("searches aliases, categories, and countries without exposing unverified routes", async () => {
     const user = userEvent.setup();
     render(<LightningPaymentHelp invoice={fakeInvoice()} now={1_700_000_001} trigger="button" />);
     await user.click(screen.getByRole("button", { name: "How can I pay?" }));
 
-    await user.type(screen.getByRole("searchbox", { name: "Search payment providers" }), "ACINQ");
+    const search = screen.getByRole("searchbox", { name: "Search payment providers" });
+    await user.type(search, "ACINQ");
     expect(screen.getByText("Phoenix")).toBeVisible();
+    const clear = screen.getByRole("button", { name: "Clear provider search" });
+    expect(clear).toBeVisible();
+    await user.click(clear);
+    expect(search).toHaveValue("");
+    expect(search).toHaveFocus();
 
-    await user.clear(screen.getByRole("searchbox", { name: "Search payment providers" }));
-    await user.type(screen.getByRole("searchbox", { name: "Search payment providers" }), "KuCoin");
+    await user.type(search, "ACINQ");
+    screen.getByRole("button", { name: "Clear provider search" }).focus();
+    await user.keyboard("{Enter}");
+    expect(search).toHaveValue("");
+    expect(search).toHaveFocus();
+
+    await user.type(search, "Philippines");
+    const countryResults = screen.getByRole("list", { name: "Matching payment providers" });
+    expect(within(countryResults).getAllByRole("link")[0]).toHaveTextContent("Strike");
+    expect(within(countryResults).queryByText("Pouch")).not.toBeInTheDocument();
+    expect(within(countryResults).getByLabelText(/98 countries/)).toHaveTextContent("🇵🇭");
+    expect(within(countryResults).getByText("Phoenix")).toBeVisible();
+
+    await user.clear(search);
+    await user.type(search, "KuCoin");
     expect(screen.queryByText("KuCoin")).not.toBeInTheDocument();
     expect(screen.getByText("No providers match this search.")).toBeVisible();
 
-    await user.clear(screen.getByRole("searchbox", { name: "Search payment providers" }));
+    await user.clear(search);
     await user.click(screen.getByRole("button", { name: "Exchanges" }));
     expect(screen.getByText("Binance")).toBeVisible();
     expect(screen.getByText("Coinbase")).toBeVisible();
@@ -132,6 +151,40 @@ describe("LightningPaymentHelp", () => {
 
     expect(screen.getByRole("dialog").closest(".lpk-backdrop")?.parentElement).toBe(document.body);
     expect(container.inert).toBe(true);
+  });
+
+  it("uses the disclosed default FixedFloat referral, allows opting out, and links the project", async () => {
+    const user = userEvent.setup();
+    const { rerender } = render(
+      <LightningPaymentHelp invoice={fakeInvoice()} now={1_700_000_001} trigger="button" />
+    );
+    await user.click(screen.getByRole("button", { name: "How can I pay?" }));
+    await user.type(screen.getByRole("searchbox", { name: "Search payment providers" }), "FixedFloat");
+
+    const defaultLink = screen.getByRole("link", { name: /FixedFloat/ });
+    expect(defaultLink).toHaveAttribute("href", "https://ff.io/?ref=pmdxabka");
+    expect(defaultLink).toHaveAttribute("rel", "sponsored noopener noreferrer");
+    expect(defaultLink).toHaveTextContent("Affiliate");
+    expect(screen.getByRole("link", { name: /Use this Bitcoin Lightning payment helper on your site/i })).toHaveAttribute(
+      "href",
+      "https://github.com/pseudozach/lightning-pay-kit"
+    );
+
+    await user.click(screen.getByRole("button", { name: "Close payment help" }));
+    rerender(
+      <LightningPaymentHelp
+        affiliateOverrides={{ fixedfloat: null }}
+        invoice={fakeInvoice()}
+        now={1_700_000_001}
+        trigger="button"
+      />
+    );
+    await user.click(screen.getByRole("button", { name: "How can I pay?" }));
+    await user.type(screen.getByRole("searchbox", { name: "Search payment providers" }), "FixedFloat");
+    const organicLink = screen.getByRole("link", { name: /FixedFloat/ });
+    expect(organicLink).toHaveAttribute("href", "https://ff.io/");
+    expect(organicLink).toHaveAttribute("rel", "noopener noreferrer");
+    expect(organicLink).not.toHaveTextContent("Affiliate");
   });
 
   it("discloses affiliate links and emits handed_off rather than payment success", async () => {

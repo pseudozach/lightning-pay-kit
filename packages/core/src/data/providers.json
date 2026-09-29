@@ -60,7 +60,9 @@
         "extension"
       ],
       "regions": {
-        "notes": "Backend and availability depend on the user's setup."
+        "notes": "Backend and availability depend on the user's setup.",
+        "scope": "global",
+        "label": "Global"
       },
       "action": {
         "type": "copy_then_open",
@@ -103,7 +105,9 @@
         "ios"
       ],
       "regions": {
-        "notes": "Fixed-amount Lightning invoices use swaps; amountless support is limited."
+        "notes": "AQUA and its third-party swap services may impose geographic restrictions; complete searchable coverage is not established.",
+        "scope": "unknown",
+        "label": "Availability varies"
       },
       "action": {
         "type": "copy_then_open",
@@ -122,6 +126,11 @@
         {
           "url": "https://github.com/AquaWallet/aqua-wallet",
           "claim": "The official wallet source implements current Lightning-to-Liquid swap flows.",
+          "checkedAt": "2026-09-29"
+        },
+        {
+          "url": "https://aqua.net/terms",
+          "claim": "AQUA terms prohibit use in named sanctioned jurisdictions and warn third-party services may add geographic restrictions.",
           "checkedAt": "2026-09-29"
         }
       ],
@@ -143,7 +152,23 @@
         "ios"
       ],
       "regions": {
-        "notes": "Account and regional availability apply."
+        "notes": "Account and regional availability apply.",
+        "scope": "country_specific",
+        "include": [
+          "AR",
+          "BO",
+          "BR",
+          "CL",
+          "CO",
+          "EC",
+          "MX",
+          "PA",
+          "PY",
+          "PE",
+          "UY",
+          "VE"
+        ],
+        "label": "Latin America · 12 countries"
       },
       "action": {
         "type": "copy_then_open",
@@ -157,6 +182,11 @@
         {
           "url": "https://help.belo.app/en/articles/5899323-how-to-withdraw-btc-from-belo-via-the-lightning-network",
           "claim": "belo documents pasting or scanning an amount-specific Lightning invoice for withdrawal.",
+          "checkedAt": "2026-09-29"
+        },
+        {
+          "url": "https://help.belo.app/en/articles/5705628-what-can-i-do-with-belo-in-my-country",
+          "claim": "belo lists twelve Latin American countries where account creation and crypto deposits and withdrawals are enabled.",
           "checkedAt": "2026-09-29"
         }
       ],
@@ -179,7 +209,9 @@
         "web"
       ],
       "regions": {
-        "notes": "Available only where Binance.com offers Lightning; account verification, limits, and fees apply. Binance.com is unavailable in the US."
+        "notes": "Available only where Binance.com offers Lightning; account verification, limits, and fees apply. Binance.com is unavailable in the US.",
+        "scope": "unknown",
+        "label": "Availability varies"
       },
       "action": {
         "type": "copy_then_open",
@@ -214,7 +246,12 @@
         "ios"
       ],
       "regions": {
-        "notes": "Brazil-focused; account and compliance requirements apply."
+        "notes": "Brazil-focused; account and compliance requirements apply.",
+        "scope": "country_specific",
+        "include": [
+          "BR"
+        ],
+        "label": "Brazil only"
       },
       "action": {
         "type": "copy_then_open",
@@ -228,6 +265,11 @@
         {
           "url": "https://suporte.bipa.app/hc/pt-br/articles/4415356329371-Como-enviar-Bitcoin-pela-rede-Lightning-na-Bipa",
           "claim": "Current instructions explicitly support scanning or pasting a Lightning invoice.",
+          "checkedAt": "2026-09-29"
+        },
+        {
+          "url": "https://suporte.bipa.app/hc/pt-br/articles/14299489418651-Quais-os-documentos-aceitos",
+          "claim": "Bipa requires Brazilian identity or resident-foreigner documentation.",
           "checkedAt": "2026-09-29"
         }
       ],
@@ -248,7 +290,8 @@
         "web"
       ],
       "regions": {
-        "notes": "Availability and limits vary by account and jurisdiction."
+        "notes": "Availability and limits vary by account and jurisdiction.",
+        "scope": "unknown"
       },
       "action": {
         "type": "copy_then_open",
@@ -282,7 +325,8 @@
         "web"
       ],
       "regions": {
-        "notes": "Availability and limits vary by account and jurisdiction."
+        "notes": "Availability and limits vary by account and jurisdiction.",
+        "scope": "unknown"
       },
       "action": {
         "type": "copy_then_open",
@@ -316,7 +360,19 @@
         "web"
       ],
       "regions": {
-        "notes": "Unavailable in the US and other restricted jurisdictions; account limits apply."
+        "notes": "Unavailable in the US and other restricted jurisdictions; account limits apply.",
+        "scope": "global_with_exclusions",
+        "exclude": [
+          "CA",
+          "CU",
+          "GB",
+          "IR",
+          "JP",
+          "KP",
+          "SY",
+          "US"
+        ],
+        "label": "Most countries"
       },
       "action": {
         "type": "copy_then_open",
@@ -330,6 +386,11 @@
         {
           "url": "https://support.bitfinex.com/hc/en-us/articles/360039801053-Lightning-Network-BTC-LN-BTC-Deposits-Withdrawals",
           "claim": "Current official instructions explicitly require the recipient wallet invoice for withdrawal.",
+          "checkedAt": "2026-09-29"
+        },
+        {
+          "url": "https://www.bitfinex.com/legal/exchange/terms/",
+          "claim": "Bitfinex terms identify prohibited countries and persons, including ordinary users in Canada, Japan, the UK, and US.",
           "checkedAt": "2026-09-29"
         }
       ],
@@ -350,7 +411,8 @@
         "web"
       ],
       "regions": {
-        "notes": "Availability and limits vary by account and jurisdiction."
+        "notes": "Availability and limits vary by account and jurisdiction.",
+        "scope": "unknown"
       },
       "action": {
         "type": "copy_then_open",
@@ -385,7 +447,9 @@
         "ios"
       ],
       "regions": {
-        "notes": "Africa-focused availability; countries and account limits vary."
+        "notes": "Africa-focused availability; countries and account limits vary.",
+        "scope": "unknown",
+        "label": "Selected African countries"
       },
       "action": {
         "type": "copy_then_open",
@@ -419,7 +483,8 @@
         "web"
       ],
       "regions": {
-        "notes": "Availability and limits vary by account and jurisdiction."
+        "notes": "Availability and limits vary by account and jurisdiction.",
+        "scope": "unknown"
       },
       "action": {
         "type": "copy_then_open",
@@ -453,7 +518,8 @@
         "web"
       ],
       "regions": {
-        "notes": "Availability and limits vary by account and jurisdiction."
+        "notes": "Availability and limits vary by account and jurisdiction.",
+        "scope": "unknown"
       },
       "action": {
         "type": "copy_then_open",
@@ -491,7 +557,9 @@
         "web"
       ],
       "regions": {
-        "notes": "Availability varies by region."
+        "notes": "First-party product evidence does not establish complete geographic availability.",
+        "scope": "unknown",
+        "label": "Availability varies"
       },
       "action": {
         "type": "copy_then_open",
@@ -533,7 +601,10 @@
         "android",
         "ios"
       ],
-      "regions": {},
+      "regions": {
+        "scope": "global",
+        "label": "Global"
+      },
       "action": {
         "type": "copy_then_open",
         "url": "https://blixtwallet.github.io/",
@@ -569,7 +640,10 @@
         "ios",
         "desktop"
       ],
-      "regions": {},
+      "regions": {
+        "scope": "global",
+        "label": "Global"
+      },
       "action": {
         "type": "copy_then_open",
         "url": "https://blockstream.com/app/",
@@ -610,7 +684,9 @@
         "ios"
       ],
       "regions": {
-        "notes": "Lightning support depends on the user's configured backend."
+        "notes": "Lightning support depends on the user's configured backend.",
+        "scope": "global",
+        "label": "Global · backend required"
       },
       "action": {
         "type": "copy_then_open",
@@ -651,7 +727,9 @@
       "platforms": [
         "web"
       ],
-      "regions": {},
+      "regions": {
+        "scope": "unknown"
+      },
       "action": {
         "type": "copy_then_open",
         "url": "https://boltz.exchange/",
@@ -687,7 +765,9 @@
         "ios"
       ],
       "regions": {
-        "notes": "The original app is in maintenance mode."
+        "notes": "The original app is in maintenance mode.",
+        "scope": "global",
+        "label": "Global"
       },
       "action": {
         "type": "copy_then_open",
@@ -721,7 +801,8 @@
         "web"
       ],
       "regions": {
-        "notes": "Türkiye; a verified BtcTurk account and product eligibility are required."
+        "notes": "Türkiye; a verified BtcTurk account and product eligibility are required.",
+        "scope": "unknown"
       },
       "action": {
         "type": "copy_then_open",
@@ -755,7 +836,8 @@
         "web"
       ],
       "regions": {
-        "notes": "Availability and limits vary by account and jurisdiction."
+        "notes": "Availability and limits vary by account and jurisdiction.",
+        "scope": "unknown"
       },
       "action": {
         "type": "copy_then_open",
@@ -795,7 +877,9 @@
         "include": [
           "US"
         ],
-        "notes": "Lightning receive availability and limits vary, including New York restrictions."
+        "notes": "Lightning receive availability and limits vary, including New York restrictions.",
+        "scope": "country_specific",
+        "label": "United States only"
       },
       "action": {
         "type": "copy_then_open",
@@ -809,6 +893,11 @@
         {
           "url": "https://cash.app/help/us/en-us/6506-bitcoin-lightning",
           "claim": "Cash App documents scanning a Lightning invoice and its rolling seven-day limit.",
+          "checkedAt": "2026-09-29"
+        },
+        {
+          "url": "https://cash.app/us/en/legal/tos",
+          "claim": "Cash App terms require users to reside in the United States.",
           "checkedAt": "2026-09-29"
         }
       ],
@@ -829,7 +918,8 @@
         "web"
       ],
       "regions": {
-        "notes": "Availability and limits vary by account and jurisdiction."
+        "notes": "Availability and limits vary by account and jurisdiction.",
+        "scope": "unknown"
       },
       "action": {
         "type": "copy_then_open",
@@ -865,7 +955,9 @@
         "web"
       ],
       "regions": {
-        "notes": "Lightning availability depends on country and Coinbase entity; the app shows applicable send limits and fees before confirmation."
+        "notes": "Lightning availability depends on country and Coinbase entity; the app shows applicable send limits and fees before confirmation.",
+        "scope": "unknown",
+        "label": "Availability varies"
       },
       "action": {
         "type": "copy_then_open",
@@ -906,7 +998,25 @@
         "ios"
       ],
       "regions": {
-        "notes": "Supported UK, European, and selected international jurisdictions; unavailable in the US."
+        "notes": "Supported UK, European, and selected international jurisdictions; unavailable in the US.",
+        "scope": "country_specific",
+        "include": [
+          "BR",
+          "CH",
+          "CW",
+          "GB",
+          "GG",
+          "IM",
+          "JE",
+          "KY",
+          "MC",
+          "MU",
+          "NZ",
+          "SG",
+          "SV",
+          "VG"
+        ],
+        "label": "Selected countries"
       },
       "action": {
         "type": "copy_then_open",
@@ -920,6 +1030,11 @@
         {
           "url": "https://support.coincorner.com/hc/en-us/articles/360020667299-Sending-and-receiving-via-Lightning",
           "claim": "Current instructions explicitly support pasting an invoice generated by the receiving wallet.",
+          "checkedAt": "2026-09-29"
+        },
+        {
+          "url": "https://www.coincorner.com/countries",
+          "claim": "CoinCorner publishes its current supported-country list.",
           "checkedAt": "2026-09-29"
         }
       ],
@@ -940,7 +1055,8 @@
         "web"
       ],
       "regions": {
-        "notes": "Availability and limits vary by account and jurisdiction."
+        "notes": "Availability and limits vary by account and jurisdiction.",
+        "scope": "unknown"
       },
       "action": {
         "type": "copy_then_open",
@@ -976,12 +1092,9 @@
         "web"
       ],
       "regions": {
-        "exclude": [
-          "US",
-          "GE",
-          "IN"
-        ],
-        "notes": "Dynamic limits and liquidity apply; terms also prohibit sanctioned jurisdictions and exceptional AML review may occur."
+        "notes": "Terms contain named and open-ended legal restrictions, so complete searchable country coverage is not established.",
+        "scope": "unknown",
+        "label": "Availability varies"
       },
       "action": {
         "type": "copy_then_open",
@@ -1022,7 +1135,9 @@
         "web"
       ],
       "regions": {
-        "notes": "Account, limits, and regional availability apply."
+        "notes": "Account, limits, and regional availability apply.",
+        "scope": "unknown",
+        "label": "Availability varies"
       },
       "action": {
         "type": "copy_then_open",
@@ -1056,7 +1171,8 @@
         "web"
       ],
       "regions": {
-        "notes": "Availability and limits vary by account and jurisdiction."
+        "notes": "Availability and limits vary by account and jurisdiction.",
+        "scope": "unknown"
       },
       "action": {
         "type": "copy_then_open",
@@ -1090,7 +1206,8 @@
         "web"
       ],
       "regions": {
-        "notes": "Availability and limits vary by account and jurisdiction."
+        "notes": "Availability and limits vary by account and jurisdiction.",
+        "scope": "unknown"
       },
       "action": {
         "type": "copy_then_open",
@@ -1124,7 +1241,22 @@
         "web"
       ],
       "regions": {
-        "notes": "Derivatives platform; account eligibility, terms, and jurisdiction restrictions apply."
+        "notes": "Derivatives platform; account eligibility, terms, and jurisdiction restrictions apply.",
+        "scope": "global_with_exclusions",
+        "exclude": [
+          "US",
+          "VC",
+          "BY",
+          "CU",
+          "IR",
+          "MM",
+          "KP",
+          "RU",
+          "SY",
+          "SD",
+          "VE"
+        ],
+        "label": "Most countries"
       },
       "action": {
         "type": "copy_then_open",
@@ -1138,6 +1270,11 @@
         {
           "url": "https://docs.lnmarkets.com/en/withdraw",
           "claim": "Current official documentation provides a dedicated Lightning invoice withdrawal workflow.",
+          "checkedAt": "2026-09-29"
+        },
+        {
+          "url": "https://cdn.lnmarkets.com/documents/tos/2.0.html",
+          "claim": "LN Markets terms identify prohibited countries and jurisdictions.",
           "checkedAt": "2026-09-29"
         }
       ],
@@ -1158,7 +1295,8 @@
         "web"
       ],
       "regions": {
-        "notes": "Availability and limits vary by account and jurisdiction."
+        "notes": "Availability and limits vary by account and jurisdiction.",
+        "scope": "unknown"
       },
       "action": {
         "type": "copy_then_open",
@@ -1192,7 +1330,8 @@
         "web"
       ],
       "regions": {
-        "notes": "Availability and limits vary by account and jurisdiction."
+        "notes": "Availability and limits vary by account and jurisdiction.",
+        "scope": "unknown"
       },
       "action": {
         "type": "copy_then_open",
@@ -1226,7 +1365,8 @@
         "web"
       ],
       "regions": {
-        "notes": "Availability and limits vary by account and jurisdiction."
+        "notes": "Availability and limits vary by account and jurisdiction.",
+        "scope": "unknown"
       },
       "action": {
         "type": "copy_then_open",
@@ -1260,7 +1400,10 @@
         "android",
         "ios"
       ],
-      "regions": {},
+      "regions": {
+        "scope": "unknown",
+        "label": "Availability not specified"
+      },
       "action": {
         "type": "copy_then_open",
         "url": "https://muun.com/",
@@ -1303,7 +1446,9 @@
         "include": [
           "CA"
         ],
-        "notes": "Canadian account and limits apply."
+        "notes": "Canadian account and limits apply.",
+        "scope": "country_specific",
+        "label": "Canada only"
       },
       "action": {
         "type": "copy_then_open",
@@ -1317,6 +1462,11 @@
         {
           "url": "https://ndax.io/en/blog/article/move-bitcoin-faster-with-btc-lightning-on-ndax",
           "claim": "Ndax documents fixed-amount Lightning invoice withdrawals and the supported range.",
+          "checkedAt": "2026-09-29"
+        },
+        {
+          "url": "https://ndax.io/en/blog/article/bitcoin-lightning-network-in-canada-what-it-means-for-faster-lower-cost-transfers",
+          "claim": "Ndax describes Lightning service for users of its regulated Canadian platform.",
           "checkedAt": "2026-09-29"
         }
       ],
@@ -1339,7 +1489,9 @@
         "ios"
       ],
       "regions": {
-        "notes": "Availability varies; Travel Rule information and account verification may be required."
+        "notes": "Availability varies; Travel Rule information and account verification may be required.",
+        "scope": "unknown",
+        "label": "Availability varies"
       },
       "action": {
         "type": "copy_then_open",
@@ -1375,7 +1527,9 @@
         "web"
       ],
       "regions": {
-        "notes": "Account and regional availability apply."
+        "notes": "Account and regional availability apply.",
+        "scope": "unknown",
+        "label": "Availability varies"
       },
       "action": {
         "type": "copy_then_open",
@@ -1389,6 +1543,11 @@
         {
           "url": "https://www.okx.com/en-us/help/how-do-i-withdraw-bitcoin-btc-with-okx-lightning-network",
           "claim": "OKX documents entering an external Lightning invoice in its withdrawal flow.",
+          "checkedAt": "2026-09-29"
+        },
+        {
+          "url": "https://www.okx.com/en-eu/help/risk-compliance-disclosure",
+          "claim": "OKX publishes restricted locations but notes additional product-specific restrictions.",
           "checkedAt": "2026-09-29"
         }
       ],
@@ -1409,7 +1568,8 @@
         "web"
       ],
       "regions": {
-        "notes": "Availability and limits vary by account and jurisdiction."
+        "notes": "Availability and limits vary by account and jurisdiction.",
+        "scope": "unknown"
       },
       "action": {
         "type": "copy_then_open",
@@ -1446,7 +1606,10 @@
         "android",
         "ios"
       ],
-      "regions": {},
+      "regions": {
+        "scope": "global",
+        "label": "Global"
+      },
       "action": {
         "type": "copy_then_open",
         "url": "https://phoenix.acinq.co/",
@@ -1484,7 +1647,8 @@
         "web"
       ],
       "regions": {
-        "notes": "Availability and limits vary by account and jurisdiction."
+        "notes": "Availability and limits vary by account and jurisdiction.",
+        "scope": "unknown"
       },
       "action": {
         "type": "copy_then_open",
@@ -1509,6 +1673,54 @@
       ]
     },
     {
+      "id": "pouch",
+      "name": "Pouch",
+      "aliases": [
+        "Pouch.ph",
+        "Pouch Philippines"
+      ],
+      "capabilitySummary": "The official site advertises Lightning payments for users in the Philippines; arbitrary external BOLT11 payment needs re-verification.",
+      "lightningModes": [
+        "custodial"
+      ],
+      "category": "payment_app",
+      "custody": "custodial",
+      "platforms": [
+        "ios",
+        "android"
+      ],
+      "regions": {
+        "include": [
+          "PH"
+        ],
+        "label": "Philippines only",
+        "notes": "Built for users in the Philippines; first-party evidence confirms Lightning payments but not the arbitrary external BOLT11 handoff required for a visible route.",
+        "scope": "country_specific"
+      },
+      "action": {
+        "type": "copy_then_open",
+        "url": "https://pouchph.com/",
+        "label": "Copy invoice, then open Pouch"
+      },
+      "serviceStatus": "active",
+      "verificationStatus": "needs_reverification",
+      "lastVerifiedAt": "2026-09-29",
+      "evidence": [
+        {
+          "url": "https://pouchph.com/",
+          "claim": "The official Pouch site says the app is built for the Philippines and supports instant Lightning Network payments worldwide.",
+          "checkedAt": "2026-09-29"
+        },
+        {
+          "url": "https://pouchph.com/terms",
+          "claim": "Pouch terms require identity verification (KYC) under Philippine regulatory requirements.",
+          "checkedAt": "2026-09-29"
+        }
+      ],
+      "accountRequired": true,
+      "kycRequired": true
+    },
+    {
       "id": "relai",
       "name": "Relai",
       "aliases": [],
@@ -1519,7 +1731,36 @@
         "ios"
       ],
       "regions": {
-        "notes": "European availability; brokerage verification and Lightning limits may apply."
+        "notes": "European availability; brokerage verification and Lightning limits may apply.",
+        "scope": "country_specific",
+        "include": [
+          "AD",
+          "AT",
+          "BE",
+          "CZ",
+          "DK",
+          "EE",
+          "FI",
+          "FR",
+          "DE",
+          "GR",
+          "HU",
+          "IE",
+          "IT",
+          "LI",
+          "LU",
+          "NL",
+          "NO",
+          "PL",
+          "PT",
+          "SM",
+          "SK",
+          "SI",
+          "ES",
+          "SE",
+          "CH"
+        ],
+        "label": "Europe · 25 countries"
       },
       "action": {
         "type": "copy_then_open",
@@ -1533,6 +1774,11 @@
         {
           "url": "https://relai.app/blog/lightning-network-guide/",
           "claim": "Relai documents recipient-created invoice QR payments from its Lightning wallet.",
+          "checkedAt": "2026-09-29"
+        },
+        {
+          "url": "https://support.relai.app/en/articles/194248-is-relai-available-in-my-country",
+          "claim": "Relai publishes a current table of 25 supported European countries.",
           "checkedAt": "2026-09-29"
         }
       ],
@@ -1553,7 +1799,8 @@
         "web"
       ],
       "regions": {
-        "notes": "Availability and limits vary by account and jurisdiction."
+        "notes": "Availability and limits vary by account and jurisdiction.",
+        "scope": "unknown"
       },
       "action": {
         "type": "copy_then_open",
@@ -1587,7 +1834,8 @@
         "web"
       ],
       "regions": {
-        "notes": "Availability and limits vary by account and jurisdiction."
+        "notes": "Availability and limits vary by account and jurisdiction.",
+        "scope": "unknown"
       },
       "action": {
         "type": "copy_then_open",
@@ -1621,7 +1869,8 @@
         "web"
       ],
       "regions": {
-        "notes": "Availability and limits vary by account and jurisdiction."
+        "notes": "Availability and limits vary by account and jurisdiction.",
+        "scope": "unknown"
       },
       "action": {
         "type": "copy_then_open",
@@ -1657,7 +1906,12 @@
         "ios"
       ],
       "regions": {
-        "notes": "United States; identity verification and funding holds can affect withdrawals."
+        "notes": "United States; identity verification and funding holds can affect withdrawals.",
+        "scope": "country_specific",
+        "include": [
+          "US"
+        ],
+        "label": "United States only"
       },
       "action": {
         "type": "copy_then_open",
@@ -1671,6 +1925,11 @@
         {
           "url": "https://support.river.com/hc/en-us/articles/45489800672915-How-do-I-send-bitcoin",
           "claim": "Current River help explicitly accepts Lightning invoices, LNURL-Pay, and Lightning addresses.",
+          "checkedAt": "2026-09-29"
+        },
+        {
+          "url": "https://support.river.com/hc/en-us/articles/45684651229715-Which-states-are-supported-by-River",
+          "claim": "River serves United States residents, with state-level exceptions.",
           "checkedAt": "2026-09-29"
         }
       ],
@@ -1691,7 +1950,8 @@
         "web"
       ],
       "regions": {
-        "notes": "Availability and limits vary by account and jurisdiction."
+        "notes": "Availability and limits vary by account and jurisdiction.",
+        "scope": "unknown"
       },
       "action": {
         "type": "copy_then_open",
@@ -1729,7 +1989,9 @@
         "include": [
           "CA"
         ],
-        "notes": "Canadian account and limits apply."
+        "notes": "Canadian account and limits apply.",
+        "scope": "country_specific",
+        "label": "Canada only"
       },
       "action": {
         "type": "copy_then_open",
@@ -1743,6 +2005,11 @@
         {
           "url": "https://help.shakepay.com/en/articles/12334301-how-to-receive-or-withdraw-bitcoin-on-the-lightning-network",
           "claim": "Shakepay documents pasting an invoice and its per-payment minimum and maximum.",
+          "checkedAt": "2026-09-29"
+        },
+        {
+          "url": "https://help.shakepay.com/en/articles/7030928-can-i-use-shakepay-while-traveling-abroad",
+          "claim": "Shakepay says its platform is available only to Canadian residents.",
           "checkedAt": "2026-09-29"
         }
       ],
@@ -1763,7 +2030,8 @@
         "web"
       ],
       "regions": {
-        "notes": "Availability and limits vary by account and jurisdiction."
+        "notes": "Availability and limits vary by account and jurisdiction.",
+        "scope": "unknown"
       },
       "action": {
         "type": "copy_then_open",
@@ -1797,7 +2065,8 @@
         "web"
       ],
       "regions": {
-        "notes": "Availability and limits vary by account and jurisdiction."
+        "notes": "Availability and limits vary by account and jurisdiction.",
+        "scope": "unknown"
       },
       "action": {
         "type": "copy_then_open",
@@ -1831,7 +2100,8 @@
         "web"
       ],
       "regions": {
-        "notes": "Availability and limits vary by account and jurisdiction."
+        "notes": "Availability and limits vary by account and jurisdiction.",
+        "scope": "unknown"
       },
       "action": {
         "type": "copy_then_open",
@@ -1868,7 +2138,10 @@
         "ios",
         "web"
       ],
-      "regions": {},
+      "regions": {
+        "scope": "unknown",
+        "label": "Availability varies"
+      },
       "action": {
         "type": "copy_then_open",
         "url": "https://www.speed.app/send-and-receive",
@@ -1906,7 +2179,8 @@
         "web"
       ],
       "regions": {
-        "notes": "Availability and limits vary by account and jurisdiction."
+        "notes": "Availability and limits vary by account and jurisdiction.",
+        "scope": "unknown"
       },
       "action": {
         "type": "copy_then_open",
@@ -1941,7 +2215,110 @@
         "ios"
       ],
       "regions": {
-        "notes": "Account and regional availability apply."
+        "notes": "Strike lists Puerto Rico within its United States availability; account and regional requirements apply.",
+        "scope": "country_specific",
+        "include": [
+          "AE",
+          "AG",
+          "AR",
+          "AT",
+          "AZ",
+          "BA",
+          "BB",
+          "BE",
+          "BG",
+          "BH",
+          "BJ",
+          "BN",
+          "BR",
+          "BT",
+          "BZ",
+          "CI",
+          "CL",
+          "CO",
+          "CR",
+          "CY",
+          "CZ",
+          "DE",
+          "DK",
+          "DO",
+          "EC",
+          "EE",
+          "ES",
+          "FI",
+          "FJ",
+          "FR",
+          "GA",
+          "GB",
+          "GE",
+          "GH",
+          "GM",
+          "GN",
+          "GQ",
+          "GR",
+          "GT",
+          "GY",
+          "HN",
+          "HR",
+          "IE",
+          "IN",
+          "IS",
+          "IT",
+          "KE",
+          "KR",
+          "KZ",
+          "LA",
+          "LI",
+          "LK",
+          "LS",
+          "LT",
+          "LU",
+          "LV",
+          "ME",
+          "MG",
+          "MN",
+          "MT",
+          "MV",
+          "MW",
+          "MX",
+          "MZ",
+          "NA",
+          "NG",
+          "NI",
+          "NL",
+          "NO",
+          "NZ",
+          "OM",
+          "PA",
+          "PE",
+          "PG",
+          "PH",
+          "PL",
+          "PR",
+          "PT",
+          "PY",
+          "RO",
+          "RS",
+          "SC",
+          "SE",
+          "SI",
+          "SK",
+          "SL",
+          "SV",
+          "TG",
+          "TL",
+          "TT",
+          "TW",
+          "UG",
+          "US",
+          "UY",
+          "VN",
+          "VU",
+          "ZA",
+          "ZM",
+          "ZW"
+        ],
+        "label": "98 countries, including Puerto Rico"
       },
       "action": {
         "type": "copy_then_open",
@@ -1955,6 +2332,11 @@
         {
           "url": "https://strike.me/support/how-do-i-send-cash-or-bitcoin/",
           "claim": "Strike documents scanning or pasting a BOLT11 invoice from the Bitcoin wallet.",
+          "checkedAt": "2026-09-29"
+        },
+        {
+          "url": "https://strike.me/support/where-is-strike-available/",
+          "claim": "Strike publishes an explicit list of 98 supported countries, including the Philippines, United Kingdom, and United States.",
           "checkedAt": "2026-09-29"
         }
       ],
@@ -1975,7 +2357,8 @@
         "web"
       ],
       "regions": {
-        "notes": "Availability and limits vary by account and jurisdiction."
+        "notes": "Availability and limits vary by account and jurisdiction.",
+        "scope": "unknown"
       },
       "action": {
         "type": "copy_then_open",
@@ -2009,7 +2392,8 @@
         "web"
       ],
       "regions": {
-        "notes": "Availability and limits vary by account and jurisdiction."
+        "notes": "Availability and limits vary by account and jurisdiction.",
+        "scope": "unknown"
       },
       "action": {
         "type": "copy_then_open",
@@ -2046,7 +2430,9 @@
         "ios"
       ],
       "regions": {
-        "notes": "Availability and operating mode vary by region."
+        "notes": "Availability and operating mode vary by region.",
+        "scope": "global",
+        "label": "Global · mode varies"
       },
       "action": {
         "type": "copy_then_open",
@@ -2060,6 +2446,11 @@
         {
           "url": "https://www.walletofsatoshi.com/",
           "claim": "The current FAQ documents Lightning payments and custodial and self-custodial modes.",
+          "checkedAt": "2026-09-29"
+        },
+        {
+          "url": "https://www.walletofsatoshi.com/",
+          "claim": "Wallet of Satoshi says self-custodial mode is available everywhere while custodial mode varies by region.",
           "checkedAt": "2026-09-29"
         }
       ],
@@ -2080,7 +2471,8 @@
         "web"
       ],
       "regions": {
-        "notes": "Availability and limits vary by account and jurisdiction."
+        "notes": "Availability and limits vary by account and jurisdiction.",
+        "scope": "unknown"
       },
       "action": {
         "type": "copy_then_open",
@@ -2116,7 +2508,10 @@
         "android",
         "ios"
       ],
-      "regions": {},
+      "regions": {
+        "scope": "global",
+        "label": "Global"
+      },
       "action": {
         "type": "copy_then_open",
         "url": "https://zeusln.com/",

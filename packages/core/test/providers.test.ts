@@ -93,6 +93,114 @@ describe("provider directory", () => {
     ).toBeGreaterThan(0);
   });
 
+  it("treats exact country searches as availability filters and ranks local providers first", () => {
+    const usOnly = {
+      ...verifiedSwap,
+      id: "us-only",
+      name: "US Only",
+      regions: { scope: "country_specific" as const, include: ["US"] }
+    };
+    const philippinesOnly = {
+      ...verifiedSwap,
+      id: "philippines-only",
+      name: "Philippines Only",
+      regions: { scope: "country_specific" as const, include: ["PH"] }
+    };
+    const global = {
+      ...verifiedSwap,
+      id: "global",
+      name: "Global",
+      regions: { scope: "global" as const }
+    };
+    const globalExceptUs = {
+      ...verifiedSwap,
+      id: "global-except-us",
+      name: "Global Except US",
+      regions: { scope: "global_with_exclusions" as const, exclude: ["US"] }
+    };
+    const unknown = {
+      ...verifiedSwap,
+      id: "unknown-region",
+      name: "Unknown Region",
+      regions: { scope: "unknown" as const }
+    };
+    const providers = [global, philippinesOnly, globalExceptUs, usOnly, unknown];
+
+    expect(filterProviders(providers, { query: "United States" }).map(({ id }) => id)).toEqual([
+      "us-only",
+      "global"
+    ]);
+    expect(filterProviders(providers, { query: "US" }).map(({ id }) => id)).toEqual([
+      "us-only",
+      "global"
+    ]);
+    expect(filterProviders(providers, { query: "USA" }).map(({ id }) => id)).toEqual([
+      "us-only",
+      "global"
+    ]);
+    expect(filterProviders(providers, { query: "Philippines" }).map(({ id }) => id)).toEqual([
+      "philippines-only",
+      "global",
+      "global-except-us"
+    ]);
+    expect(filterProviders(providers, { query: "PH" }).map(({ id }) => id)).toEqual([
+      "philippines-only",
+      "global",
+      "global-except-us"
+    ]);
+  });
+
+  it("uses evidence-backed country metadata in the bundled directory", () => {
+    const usResults = filterProviders(defaultProviders, { query: "USA" }).map(({ id }) => id);
+    expect(usResults.slice(0, 3)).toEqual(["cash-app", "river", "strike"]);
+    expect(usResults).not.toContain("fixedfloat");
+    expect(usResults).not.toContain("coinbase");
+
+    const philippinesResults = filterProviders(defaultProviders, { query: "Philippines" }).map(({ id }) => id);
+    expect(philippinesResults[0]).toBe("strike");
+    expect(philippinesResults).toContain("phoenix");
+    expect(philippinesResults).not.toContain("pouch");
+    expect(philippinesResults).not.toContain("coinbase");
+    expect(philippinesResults).not.toContain("aqua");
+
+    for (const query of ["Puerto Rico", "PR", "PRI"]) {
+      const puertoRicoResults = filterProviders(defaultProviders, { query }).map(({ id }) => id);
+      expect(puertoRicoResults[0]).toBe("strike");
+    }
+
+    for (const query of ["North Korea", "KP", "PRK"]) {
+      const restrictedResults = filterProviders(defaultProviders, { query }).map(({ id }) => id);
+      expect(restrictedResults).not.toContain("fixedfloat");
+      expect(restrictedResults).not.toContain("blink");
+    }
+  });
+
+  it("rejects contradictory and unmaintained region metadata", () => {
+    const invalidRegions = [
+      { ...verifiedSwap, id: "unknown-with-include", regions: { scope: "unknown", include: ["KP"] } },
+      { ...verifiedSwap, id: "global-with-exclude", regions: { scope: "global", exclude: ["KP"] } },
+      {
+        ...verifiedSwap,
+        id: "missing-global-exclusions",
+        regions: { scope: "global_with_exclusions" }
+      },
+      {
+        ...verifiedSwap,
+        id: "unmaintained-country",
+        regions: { scope: "country_specific", include: ["ZZ"] }
+      },
+      {
+        ...verifiedSwap,
+        id: "duplicate-country",
+        regions: { scope: "country_specific", include: ["US", "US"] }
+      }
+    ] as unknown as PaymentProvider[];
+
+    expect(
+      filterProviders(invalidRegions, { query: "North Korea", includeUnavailable: true })
+    ).toEqual([]);
+  });
+
   it("rejects unsafe destinations and unknown metadata", () => {
     const unsafeRecords = [
       { ...verifiedSwap, action: { ...verifiedSwap.action, url: "javascript:alert(1)" } },
@@ -127,7 +235,10 @@ describe("provider directory", () => {
   });
 
   it("applies disclosed HTTPS affiliate destinations without changing order", () => {
-    const organic = [verifiedSwap, ...defaultProviders.slice(0, 2)];
+    const fixedFloat = defaultProviders.find(({ id }) => id === "fixedfloat");
+    expect(fixedFloat).toBeDefined();
+    if (!fixedFloat) return;
+    const organic = [verifiedSwap, fixedFloat, ...defaultProviders.slice(0, 2)];
     const result = applyAffiliateOverrides(organic, {
       "example-swap": {
         url: "https://swap.example/pay?ref=host",
@@ -140,6 +251,23 @@ describe("provider directory", () => {
       destinationUrl: "https://swap.example/pay?ref=host",
       affiliateDisclosure: "Affiliate link"
     });
+    expect(result[1]).toMatchObject({
+      destinationUrl: "https://ff.io/?ref=pmdxabka",
+      affiliateDisclosure: "Affiliate"
+    });
+    expect(applyAffiliateOverrides([fixedFloat], { fixedfloat: null })[0]).toMatchObject({
+      destinationUrl: "https://ff.io/"
+    });
+    expect(applyAffiliateOverrides([fixedFloat], { fixedfloat: null })[0]?.affiliateDisclosure).toBeUndefined();
+    const unrelatedRecord = {
+      ...verifiedSwap,
+      id: "fixedfloat",
+      action: { ...verifiedSwap.action, url: "https://swap.example/pay" }
+    };
+    expect(applyAffiliateOverrides([unrelatedRecord])[0]).toMatchObject({
+      destinationUrl: "https://swap.example/pay"
+    });
+    expect(applyAffiliateOverrides([unrelatedRecord])[0]?.affiliateDisclosure).toBeUndefined();
     expect(() =>
       applyAffiliateOverrides(organic, {
         "example-swap": { url: "data:text/html,bad", disclosure: "Affiliate link" }
