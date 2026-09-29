@@ -2,12 +2,12 @@
 
 ## Product
 
-A lightweight, open-source React UI component that answers one question beside a Lightning invoice: **“How can I pay?”**
+A lightweight, open-source React UI component that helps a user choose a verified way to pay a Lightning invoice.
 
-The host passes a BOLT11 invoice. A small trigger (for example a `?` button) opens an accessible mobile sheet / desktop dialog containing:
+The host passes a BOLT11 invoice. A clear **How to pay this invoice** action opens an accessible mobile sheet / desktop dialog containing:
 
 - a fast searchable grid/list grouped into wallets, payment apps, exchanges, and swaps;
-- truthful provider actions such as “Copy invoice, then open Binance’s Lightning withdrawal instructions”;
+- concise provider cards with structured custody, account, KYC, category, and availability tags;
 - optional host-supplied, visibly disclosed affiliate destinations.
 
 The modal is provider-first: it does not repeat the host page’s QR, invoice text, amount, network, or generic wallet handoff UI.

@@ -7,15 +7,24 @@ import { fakeInvoice } from "../../core/test/fixtures.js";
 import { LightningPaymentHelp } from "../src/index.js";
 
 describe("LightningPaymentHelp", () => {
+  it("uses a clear action label for the full button trigger", () => {
+    render(<LightningPaymentHelp invoice={fakeInvoice()} now={1_700_000_001} trigger="button" />);
+
+    expect(screen.getByRole("button", { name: "How to pay this invoice" })).toBeVisible();
+  });
+
   it("explains each provider's Lightning mechanism instead of internal taxonomy", async () => {
     const user = userEvent.setup();
     render(<LightningPaymentHelp invoice={fakeInvoice()} now={1_700_000_001} trigger="button" />);
 
-    await user.click(screen.getByRole("button", { name: "How can I pay?" }));
+    await user.click(screen.getByRole("button", { name: "How to pay this invoice" }));
     await user.type(screen.getByRole("searchbox", { name: "Search payment providers" }), "BlueWallet");
 
     const dialog = screen.getByRole("dialog", { name: "How can I pay?" });
-    expect(within(dialog).getByText(/Arkade.*Lightning swaps.*LNDHub/i)).toBeVisible();
+    expect(within(dialog).getByText("Arkade pays fixed-amount invoices through Boltz swaps; LNDHub connects to your node.")).toBeVisible();
+    expect(within(dialog).getByText("Wallet")).toBeVisible();
+    expect(within(dialog).getByText("Flexible custody")).toBeVisible();
+    expect(within(dialog).getByText("No account")).toBeVisible();
     expect(within(dialog).queryByText(/^configurable$/i)).not.toBeInTheDocument();
     expect(within(dialog).queryByText(/open BlueWallet's website/i)).not.toBeInTheDocument();
   });
@@ -43,7 +52,7 @@ describe("LightningPaymentHelp", () => {
   it("searches aliases, categories, and countries without exposing unverified routes", async () => {
     const user = userEvent.setup();
     render(<LightningPaymentHelp invoice={fakeInvoice()} now={1_700_000_001} trigger="button" />);
-    await user.click(screen.getByRole("button", { name: "How can I pay?" }));
+    await user.click(screen.getByRole("button", { name: "How to pay this invoice" }));
 
     const search = screen.getByRole("searchbox", { name: "Search payment providers" });
     await user.type(search, "ACINQ");
@@ -64,7 +73,7 @@ describe("LightningPaymentHelp", () => {
     const countryResults = screen.getByRole("list", { name: "Matching payment providers" });
     expect(within(countryResults).getAllByRole("link")[0]).toHaveTextContent("Strike");
     expect(within(countryResults).queryByText("Pouch")).not.toBeInTheDocument();
-    expect(within(countryResults).getByLabelText(/98 countries/)).toHaveTextContent("🇵🇭");
+    expect(within(countryResults).getByText(/98 countries/)).toHaveTextContent("including Puerto Rico");
     expect(within(countryResults).getByText("Phoenix")).toBeVisible();
 
     await user.clear(search);
@@ -101,7 +110,7 @@ describe("LightningPaymentHelp", () => {
       value: { writeText: vi.fn().mockRejectedValue(new Error("denied")) }
     });
     render(<LightningPaymentHelp invoice={fakeInvoice()} now={1_700_000_001} trigger="button" />);
-    await user.click(screen.getByRole("button", { name: "How can I pay?" }));
+    await user.click(screen.getByRole("button", { name: "How to pay this invoice" }));
     await user.type(screen.getByRole("searchbox", { name: "Search payment providers" }), "Phoenix");
     await user.click(screen.getByRole("link", { name: /Phoenix/ }));
 
@@ -125,7 +134,7 @@ describe("LightningPaymentHelp", () => {
     const { rerender } = render(
       <LightningPaymentHelp invoice={fakeInvoice({ expiry: 1 })} now={1_700_000_002} trigger="button" />
     );
-    await user.click(screen.getByRole("button", { name: "How can I pay?" }));
+    await user.click(screen.getByRole("button", { name: "How to pay this invoice" }));
     expect(screen.getByText("This invoice has expired")).toBeVisible();
     expect(screen.queryByRole("region", { name: "Provider directory" })).not.toBeInTheDocument();
     expect(screen.queryByText("Phoenix")).not.toBeInTheDocument();
@@ -133,7 +142,7 @@ describe("LightningPaymentHelp", () => {
 
     await user.click(screen.getByRole("button", { name: "Close payment help" }));
     rerender(<LightningPaymentHelp invoice="data:text/html,bad" trigger="button" />);
-    await user.click(screen.getByRole("button", { name: "How can I pay?" }));
+    await user.click(screen.getByRole("button", { name: "How to pay this invoice" }));
     expect(screen.getByRole("alert")).toHaveTextContent("Invoice unavailable");
     expect(screen.queryByRole("region", { name: "Provider directory" })).not.toBeInTheDocument();
     expect(screen.queryByText("Phoenix")).not.toBeInTheDocument();
@@ -158,7 +167,7 @@ describe("LightningPaymentHelp", () => {
     const { rerender } = render(
       <LightningPaymentHelp invoice={fakeInvoice()} now={1_700_000_001} trigger="button" />
     );
-    await user.click(screen.getByRole("button", { name: "How can I pay?" }));
+    await user.click(screen.getByRole("button", { name: "How to pay this invoice" }));
     await user.type(screen.getByRole("searchbox", { name: "Search payment providers" }), "FixedFloat");
 
     const defaultLink = screen.getByRole("link", { name: /FixedFloat/ });
@@ -179,7 +188,7 @@ describe("LightningPaymentHelp", () => {
         trigger="button"
       />
     );
-    await user.click(screen.getByRole("button", { name: "How can I pay?" }));
+    await user.click(screen.getByRole("button", { name: "How to pay this invoice" }));
     await user.type(screen.getByRole("searchbox", { name: "Search payment providers" }), "FixedFloat");
     const organicLink = screen.getByRole("link", { name: /FixedFloat/ });
     expect(organicLink).toHaveAttribute("href", "https://ff.io/");
@@ -207,7 +216,7 @@ describe("LightningPaymentHelp", () => {
         trigger="button"
       />
     );
-    await user.click(screen.getByRole("button", { name: "How can I pay?" }));
+    await user.click(screen.getByRole("button", { name: "How to pay this invoice" }));
     await user.type(screen.getByRole("searchbox", { name: "Search payment providers" }), "Phoenix");
     const providerLink = screen.getByRole("link", { name: /Phoenix/ });
     expect(providerLink).toHaveAttribute("href", "https://phoenix.acinq.co/?ref=host");

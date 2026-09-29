@@ -14,7 +14,7 @@ export interface LightningPaymentHelpProps {
 }
 
 function TriggerContent({ trigger }: { readonly trigger: "icon" | "button" }): ReactNode {
-  if (trigger === "button") return "How can I pay?";
+  if (trigger === "button") return "How to pay this invoice";
   return <span aria-hidden="true">?</span>;
 }
 
@@ -45,7 +45,7 @@ export function LightningPaymentHelp({
       <button
         aria-expanded={controller.isOpen}
         aria-haspopup="dialog"
-        aria-label={trigger === "icon" ? "How can I pay this Lightning invoice?" : "How can I pay?"}
+        aria-label={trigger === "icon" ? "How can I pay this Lightning invoice?" : "How to pay this invoice"}
         className={trigger === "icon" ? "lpk-trigger lpk-trigger-icon" : "lpk-trigger"}
         onClick={controller.open}
         type="button"

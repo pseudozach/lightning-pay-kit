@@ -44,11 +44,23 @@ describe("provider directory", () => {
 
     expect(aqua?.action.url).toBe("https://aqua.net/");
     expect(blueWallet?.serviceStatus).toBe("active");
-    expect(blueWallet?.capabilitySummary).toMatch(/Arkade.*Lightning swaps.*LNDHub/i);
-    for (const provider of providers) {
-      expect(provider.capabilitySummary, provider.id).toMatch(/^.{45,160}$/);
+    expect(blueWallet?.capabilitySummary).toBe(
+      "Arkade pays fixed-amount invoices through Boltz swaps; LNDHub connects to your node."
+    );
+    expect(blueWallet?.evidence.map(({ url }) => url)).toContain(
+      "https://github.com/BlueWallet/BlueWallet/blob/8.0.1/class/wallets/lightning-ark-wallet.ts#L635-L675"
+    );
+    const visible = providers.filter(
+      ({ serviceStatus, verificationStatus }) =>
+        verificationStatus === "verified" && ["active", "maintenance"].includes(serviceStatus)
+    );
+    for (const provider of visible) {
+      expect(provider.custody, `${provider.name} must expose custody, not its payment mechanism`).not.toBe(
+        "swap_based"
+      );
+      expect(provider.capabilitySummary, provider.id).toMatch(/^.{30,100}$/);
       expect(provider.capabilitySummary, provider.id).not.toMatch(
-        /copy invoice|open .*website|^configurable$/i
+        /copy invoice|open .*website|^configurable$|\b(?:paste|scan|enter|submit)\b|BOLT11|[—–]/i
       );
     }
   });
@@ -72,7 +84,9 @@ describe("provider directory", () => {
     expect(
       filterProviders(defaultProviders, { category: "exchange" }).length
     ).toBeGreaterThanOrEqual(10);
-    expect(visibleIds).not.toEqual(expect.arrayContaining(["bitget", "bitso", "kucoin"]));
+    for (const id of ["bitget", "bitso", "kucoin", "relai", "speed"]) {
+      expect(visibleIds).not.toContain(id);
+    }
     expect(defaultProviders.map(({ id }) => id)).toEqual(
       expect.arrayContaining(["bitget", "bitso", "kucoin"])
     );

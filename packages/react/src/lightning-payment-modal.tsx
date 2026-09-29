@@ -30,6 +30,20 @@ const categories = [
 
 type Category = (typeof categories)[number][0];
 
+const categoryLabels: Record<PaymentProvider["category"], string> = {
+  exchange: "Exchange",
+  payment_app: "Payment app",
+  swap: "Swap",
+  wallet: "Wallet"
+};
+
+const custodyLabels: Record<PaymentProvider["custody"], string> = {
+  configurable: "Flexible custody",
+  custodial: "Custodial",
+  self_custodial: "Self-custody",
+  swap_based: "Swap-based"
+};
+
 let activeScrollLocks = 0;
 let bodyInitiallyHadScrollLock = false;
 
@@ -307,11 +321,13 @@ export function LightningPaymentModal({
                               </span>
                               <span>{provider.capabilitySummary ?? provider.action.label}</span>
                               <span className="lpk-provider-meta">
-                                <small aria-label={region.label} className="lpk-region">
-                                  <span aria-hidden="true">{region.flags}</span>
-                                  {region.label}
+                                <small className="lpk-meta-pill">{categoryLabels[provider.category]}</small>
+                                <small className="lpk-meta-pill">{custodyLabels[provider.custody]}</small>
+                                <small className="lpk-meta-pill">
+                                  {provider.accountRequired ? "Account" : "No account"}
                                 </small>
-                                {provider.accountRequired ? <small>Account required</small> : null}
+                                {provider.kycRequired ? <small className="lpk-meta-pill">KYC</small> : null}
+                                <small className="lpk-meta-pill lpk-region">{region.label}</small>
                               </span>
                             </span>
                             <span aria-hidden="true" className="lpk-arrow">↗</span>

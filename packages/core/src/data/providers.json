@@ -86,7 +86,7 @@
       ],
       "accountRequired": false,
       "kycRequired": false,
-      "capabilitySummary": "Runs an embedded self-custodial LDK node, or connects to your external Lightning node.",
+      "capabilitySummary": "Embedded LDK node with optional remote-node connections.",
       "lightningModes": [
         "embedded_node",
         "remote_node"
@@ -99,7 +99,7 @@
         "Aqua Wallet"
       ],
       "category": "wallet",
-      "custody": "swap_based",
+      "custody": "self_custodial",
       "platforms": [
         "android",
         "ios"
@@ -136,7 +136,7 @@
       ],
       "accountRequired": false,
       "kycRequired": false,
-      "capabilitySummary": "Pays Lightning invoices with a just-in-time swap from self-custodied Liquid funds.",
+      "capabilitySummary": "Swaps self-custodied Liquid funds at payment time.",
       "lightningModes": [
         "swap"
       ]
@@ -192,7 +192,7 @@
       ],
       "accountRequired": true,
       "kycRequired": true,
-      "capabilitySummary": "Paste or scan a BOLT11 invoice; verified belo account in supported Latin American countries.",
+      "capabilitySummary": "Custodial Lightning wallet for supported Latin American accounts.",
       "lightningModes": [
         "exchange_withdrawal"
       ]
@@ -230,7 +230,7 @@
       ],
       "accountRequired": true,
       "kycRequired": true,
-      "capabilitySummary": "Withdraw BTC to a BOLT11 invoice through Binance Lightning where the feature is available.",
+      "capabilitySummary": "Lightning withdrawals depend on account and region availability.",
       "lightningModes": [
         "exchange_withdrawal"
       ]
@@ -275,7 +275,7 @@
       ],
       "accountRequired": true,
       "kycRequired": true,
-      "capabilitySummary": "Scan or paste a BOLT11 invoice; Bipa fills its fixed amount and pays it from your account.",
+      "capabilitySummary": "Pays the fixed invoice amount directly from your Bipa balance.",
       "lightningModes": [
         "exchange_withdrawal"
       ]
@@ -396,7 +396,7 @@
       ],
       "accountRequired": true,
       "kycRequired": true,
-      "capabilitySummary": "Convert BTC to LN-BTC, then paste the recipient wallet’s BOLT11 into the withdrawal field.",
+      "capabilitySummary": "Convert BTC to LN-BTC before withdrawing over Lightning.",
       "lightningModes": [
         "exchange_withdrawal"
       ]
@@ -468,7 +468,7 @@
       ],
       "accountRequired": true,
       "kycRequired": true,
-      "capabilitySummary": "Paste or scan a BOLT11 invoice, then authorize the payment with your transaction PIN.",
+      "capabilitySummary": "Confirms Lightning payments with your transaction PIN.",
       "lightningModes": [
         "exchange_withdrawal"
       ]
@@ -583,7 +583,7 @@
       ],
       "accountRequired": true,
       "kycRequired": false,
-      "capabilitySummary": "Pays from a managed Lightning balance or a self-custodial Spark wallet via an SSP.",
+      "capabilitySummary": "Managed Lightning or self-custodial Spark wallet mode.",
       "lightningModes": [
         "custodial",
         "spark"
@@ -622,7 +622,7 @@
       ],
       "accountRequired": false,
       "kycRequired": false,
-      "capabilitySummary": "Runs LND and Neutrino on your phone; its LSP can open channels when liquidity is needed.",
+      "capabilitySummary": "On-device LND and Neutrino with LSP liquidity support.",
       "lightningModes": [
         "embedded_node"
       ]
@@ -666,7 +666,7 @@
       ],
       "accountRequired": false,
       "kycRequired": false,
-      "capabilitySummary": "Controls a self-custodial Greenlight node to send native Lightning payments.",
+      "capabilitySummary": "Self-custodial Greenlight node managed from the app.",
       "lightningModes": [
         "hosted_node"
       ]
@@ -686,7 +686,7 @@
       "regions": {
         "notes": "Lightning support depends on the user's configured backend.",
         "scope": "global",
-        "label": "Global · backend required"
+        "label": "Global"
       },
       "action": {
         "type": "copy_then_open",
@@ -698,8 +698,8 @@
       "lastVerifiedAt": "2026-09-29",
       "evidence": [
         {
-          "url": "https://github.com/BlueWallet/BlueWallet/releases/tag/8.0.1",
-          "claim": "The current production release includes Arkade Lightning support and Boltz-swap dependencies.",
+          "url": "https://github.com/BlueWallet/BlueWallet/blob/8.0.1/class/wallets/lightning-ark-wallet.ts#L635-L675",
+          "claim": "BlueWallet 8.0.1 decodes a Lightning invoice and calls ArkadeSwaps.sendLightningPayment, whose comments identify a Boltz submarine swap.",
           "checkedAt": "2026-09-29"
         },
         {
@@ -710,7 +710,7 @@
       ],
       "accountRequired": false,
       "kycRequired": false,
-      "capabilitySummary": "Pays via self-custodial Arkade-to-Lightning swaps, or through your own LNDHub node.",
+      "capabilitySummary": "Arkade pays fixed-amount invoices through Boltz swaps; LNDHub connects to your node.",
       "lightningModes": [
         "swap",
         "remote_node"
@@ -786,7 +786,7 @@
       ],
       "accountRequired": false,
       "kycRequired": false,
-      "capabilitySummary": "Uses embedded LND and LSP-opened channels; the original app is now in maintenance mode.",
+      "capabilitySummary": "Embedded LND with LSP channels; the app is in maintenance mode.",
       "lightningModes": [
         "embedded_node"
       ]
@@ -903,7 +903,7 @@
       ],
       "accountRequired": true,
       "kycRequired": true,
-      "capabilitySummary": "Scan a BOLT11 QR to pay; US accounts only, with a $999 rolling 7-day Lightning limit.",
+      "capabilitySummary": "US only, with a $999 rolling 7-day Lightning limit.",
       "lightningModes": [
         "custodial"
       ]
@@ -981,7 +981,7 @@
       ],
       "accountRequired": true,
       "kycRequired": true,
-      "capabilitySummary": "Send BTC to a BOLT11 invoice from Coinbase in supported accounts and regions.",
+      "capabilitySummary": "Lightning sends depend on account and region availability.",
       "lightningModes": [
         "exchange_withdrawal"
       ]
@@ -1040,7 +1040,7 @@
       ],
       "accountRequired": true,
       "kycRequired": true,
-      "capabilitySummary": "Paste a fixed-amount BOLT11 into Recipient; CoinCorner recognizes and pays it without a withdrawal fee.",
+      "capabilitySummary": "Fixed-amount Lightning sends have no withdrawal fee.",
       "lightningModes": [
         "exchange_withdrawal"
       ]
@@ -1087,7 +1087,7 @@
         "Fixed Float"
       ],
       "category": "swap",
-      "custody": "swap_based",
+      "custody": "custodial",
       "platforms": [
         "web"
       ],
@@ -1118,7 +1118,7 @@
       ],
       "accountRequired": false,
       "kycRequired": false,
-      "capabilitySummary": "Create a temporary exchange order that delivers bitcoin to a Lightning invoice; limits vary.",
+      "capabilitySummary": "Custodial swap service with Lightning payouts; no account required.",
       "lightningModes": [
         "swap"
       ]
@@ -1156,7 +1156,7 @@
       ],
       "accountRequired": true,
       "kycRequired": true,
-      "capabilitySummary": "Paste an amount-specific BOLT11 withdrawal request; verified Kraken account required.",
+      "capabilitySummary": "Amount-specific Lightning withdrawals require a verified account.",
       "lightningModes": [
         "exchange_withdrawal"
       ]
@@ -1280,7 +1280,7 @@
       ],
       "accountRequired": true,
       "kycRequired": true,
-      "capabilitySummary": "Paste a BOLT11 invoice into Withdraw to pay it from your Lightning-funded trading balance.",
+      "capabilitySummary": "Withdraws from a Lightning-funded trading balance.",
       "lightningModes": [
         "exchange_withdrawal"
       ]
@@ -1426,7 +1426,7 @@
       ],
       "accountRequired": false,
       "kycRequired": false,
-      "capabilitySummary": "Uses submarine swaps so one self-custodial balance can pay Lightning invoices.",
+      "capabilitySummary": "Submarine swaps connect its self-custodial balance to Lightning.",
       "lightningModes": [
         "swap"
       ]
@@ -1472,7 +1472,7 @@
       ],
       "accountRequired": true,
       "kycRequired": true,
-      "capabilitySummary": "Submit an amount-specific BOLT11; Canadian account, 0.000001–0.1 BTC per withdrawal.",
+      "capabilitySummary": "Limits each withdrawal to 100 through 10,000,000 sats.",
       "lightningModes": [
         "exchange_withdrawal"
       ]
@@ -1510,7 +1510,7 @@
       ],
       "accountRequired": true,
       "kycRequired": true,
-      "capabilitySummary": "Choose a Lightning BTC withdrawal and enter a BOLT11, Lightning Address, or LNURL-pay destination.",
+      "capabilitySummary": "Supports Lightning invoices, Lightning Address, and LNURL-pay.",
       "lightningModes": [
         "exchange_withdrawal"
       ]
@@ -1553,7 +1553,7 @@
       ],
       "accountRequired": true,
       "kycRequired": true,
-      "capabilitySummary": "Paste a BOLT11 withdrawal invoice; eligible accounts, max 0.05 BTC each and 0.5 BTC daily.",
+      "capabilitySummary": "Limits eligible accounts to 5M sats each and 50M sats daily.",
       "lightningModes": [
         "exchange_withdrawal"
       ]
@@ -1632,7 +1632,7 @@
       ],
       "accountRequired": false,
       "kycRequired": false,
-      "capabilitySummary": "Runs a self-custodial Lightning node with automated channel liquidity from ACINQ.",
+      "capabilitySummary": "On-device Lightning node with automated ACINQ liquidity.",
       "lightningModes": [
         "embedded_node"
       ]
@@ -1768,12 +1768,12 @@
         "label": "Open Relai Lightning payment instructions"
       },
       "serviceStatus": "active",
-      "verificationStatus": "verified",
+      "verificationStatus": "needs_reverification",
       "lastVerifiedAt": "2026-09-29",
       "evidence": [
         {
           "url": "https://relai.app/blog/lightning-network-guide/",
-          "claim": "Relai documents recipient-created invoice QR payments from its Lightning wallet.",
+          "claim": "Relai's article explains Lightning generally but does not document a Relai external-invoice payment flow.",
           "checkedAt": "2026-09-29"
         },
         {
@@ -1784,7 +1784,7 @@
       ],
       "accountRequired": true,
       "kycRequired": true,
-      "capabilitySummary": "Scan a BOLT11 QR and pay it from Relai’s self-custodial Lightning wallet balance.",
+      "capabilitySummary": "External Lightning invoice payments need current first-party product documentation.",
       "lightningModes": [
         "native_lightning"
       ]
@@ -1935,7 +1935,7 @@
       ],
       "accountRequired": true,
       "kycRequired": true,
-      "capabilitySummary": "Enter a BOLT11 invoice, LNURL-Pay, or Lightning Address in River’s Bitcoin Send flow.",
+      "capabilitySummary": "Supports Lightning invoices, Lightning Address, and LNURL-pay.",
       "lightningModes": [
         "exchange_withdrawal"
       ]
@@ -2015,7 +2015,7 @@
       ],
       "accountRequired": true,
       "kycRequired": true,
-      "capabilitySummary": "Paste a BOLT11 invoice; Canadian account, 1 sat–C$5,000 per Lightning withdrawal.",
+      "capabilitySummary": "Limits each Lightning withdrawal to 1 sat through C$5,000.",
       "lightningModes": [
         "exchange_withdrawal"
       ]
@@ -2148,12 +2148,12 @@
         "label": "Open Speed Wallet Lightning payment instructions"
       },
       "serviceStatus": "active",
-      "verificationStatus": "verified",
+      "verificationStatus": "needs_reverification",
       "lastVerifiedAt": "2026-09-29",
       "evidence": [
         {
           "url": "https://www.speed.app/send-and-receive",
-          "claim": "Speed documents sending and receiving Bitcoin over Lightning.",
+          "claim": "Speed documents Lightning sending but does not explicitly identify arbitrary external BOLT11 input.",
           "checkedAt": "2026-09-29"
         },
         {
@@ -2164,7 +2164,7 @@
       ],
       "accountRequired": true,
       "kycRequired": false,
-      "capabilitySummary": "Pays Lightning from a provider-custodied account balance managed through Speed.",
+      "capabilitySummary": "External BOLT11 payment input needs explicit current first-party documentation.",
       "lightningModes": [
         "custodial"
       ]
@@ -2342,7 +2342,7 @@
       ],
       "accountRequired": true,
       "kycRequired": true,
-      "capabilitySummary": "Paste or scan a BOLT11 invoice; a Strike account is required in a supported country.",
+      "capabilitySummary": "Lightning payments use the app’s Bitcoin wallet balance.",
       "lightningModes": [
         "custodial"
       ]
@@ -2432,7 +2432,7 @@
       "regions": {
         "notes": "Availability and operating mode vary by region.",
         "scope": "global",
-        "label": "Global · mode varies"
+        "label": "Global"
       },
       "action": {
         "type": "copy_then_open",
@@ -2456,7 +2456,7 @@
       ],
       "accountRequired": false,
       "kycRequired": false,
-      "capabilitySummary": "Pays Lightning from either a custodial balance or its self-custodial wallet mode.",
+      "capabilitySummary": "Choose custodial or self-custodial wallet mode where available.",
       "lightningModes": [
         "custodial"
       ]
@@ -2534,7 +2534,7 @@
       ],
       "accountRequired": false,
       "kycRequired": false,
-      "capabilitySummary": "Pays through its embedded self-custodial node or a connected LND/Core Lightning node.",
+      "capabilitySummary": "Embedded node or remote LND and Core Lightning connections.",
       "lightningModes": [
         "embedded_node",
         "remote_node"

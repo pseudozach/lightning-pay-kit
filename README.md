@@ -1,7 +1,7 @@
 # Lightning Pay Kit
 
-A small React component that sits beside a BOLT11 invoice and answers one
-question: **How can I pay?**
+A small React component that gives people a clear route from a BOLT11 invoice
+to a compatible payment provider.
 
 [Live demo](https://pseudozach.github.io/lightning-pay-kit/) · [npm](https://www.npmjs.com/package/lightning-pay-kit) · [Contributing](CONTRIBUTING.md)
 
@@ -56,7 +56,8 @@ export function InvoiceHelp({ invoice }: { invoice: string }) {
 }
 ```
 
-Use `trigger="button"` for a text button or omit it for the compact `?` trigger.
+Use `trigger="button"` for the recommended **How to pay this invoice** action.
+The compact `?` trigger remains available for hosts that explicitly need it.
 
 ## SMS4Sats integration
 
@@ -143,7 +144,7 @@ identified community discovery sources.
 Consumers can use the raw GitHub file or the npm exports
 `lightning-pay-kit/providers.json` and
 `lightning-pay-kit/providers.schema.json`. The current database retains **59**
-researched records while showing only **30** verified, usable routes. Country
+researched records while showing only **28** verified, usable routes. Country
 searches prioritize explicitly local providers, include available global
 providers, and respect structured exclusions; this keeps plausible candidates
 auditable without presenting them as working payment paths.

@@ -313,6 +313,10 @@ main {
   padding: 5rem 0;
 }
 
+.integration > * {
+  min-width: 0;
+}
+
 .integration h2 {
   font-size: clamp(2rem, 4vw, 3.5rem);
   letter-spacing: -0.055em;
@@ -333,6 +337,7 @@ pre {
   font-size: clamp(0.68rem, 1.25vw, 0.86rem);
   line-height: 1.65;
   margin: 0;
+  max-width: 100%;
   overflow-x: auto;
   padding: clamp(1rem, 3vw, 1.5rem);
 }
@@ -382,6 +387,15 @@ pre {
 
   .invoice-card {
     transform: none;
+  }
+
+  .help-row {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .help-row .lpk-trigger {
+    align-self: flex-start;
   }
 
   .integration {

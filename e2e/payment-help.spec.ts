@@ -14,12 +14,35 @@ test("is usable, responsive, keyboard-safe, and accessible", async ({ page }, te
       () => document.documentElement.scrollWidth <= document.documentElement.clientWidth
     )
   ).toBe(true);
-  const trigger = page.getByRole("button", { name: "How can I pay?", exact: true });
+  const trigger = page.getByRole("button", { name: "How to pay this invoice", exact: true });
   await trigger.focus();
   await trigger.click();
 
   const dialog = page.getByRole("dialog", { name: "How can I pay?" });
   await expect(dialog).toBeVisible();
+  await expect
+    .poll(async () => {
+      const cards = dialog.locator(".lpk-provider");
+      const cardSizes = await cards.evaluateAll((elements) =>
+        elements.map((card) => ({
+          height: Math.round(card.getBoundingClientRect().height),
+          overflows: card.scrollHeight > card.clientHeight || card.scrollWidth > card.clientWidth,
+          width: Math.round(card.getBoundingClientRect().width)
+        }))
+      );
+      return {
+        heights: new Set(cardSizes.map(({ height }) => height)).size,
+        overflowCount: cardSizes.filter(({ overflows }) => overflows).length,
+        widths: new Set(cardSizes.map(({ width }) => width)).size
+      };
+    })
+    .toEqual({ heights: 1, overflowCount: 0, widths: 1 });
+  const modalOverflowCount = await page.evaluate(() =>
+    [document.documentElement, document.querySelector(".lpk-dialog"), document.querySelector(".lpk-provider-grid")]
+      .filter((element): element is HTMLElement => element instanceof HTMLElement)
+      .filter((element) => element.scrollWidth > element.clientWidth).length
+  );
+  expect(modalOverflowCount).toBe(0);
   await expect(page.getByRole("button", { name: "Close payment help" })).toBeFocused();
   await expect(dialog.getByRole("heading", { name: "Provider directory" })).toBeVisible();
   const search = dialog.getByRole("searchbox", { name: "Search payment providers" });
@@ -67,7 +90,7 @@ test("opens and closes without strict-CSP inline-style violations", async ({ pag
     policy.content = "default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:; connect-src 'self' ws:";
     document.head.append(policy);
   });
-  await page.getByRole("button", { name: "How can I pay?", exact: true }).click();
+  await page.getByRole("button", { name: "How to pay this invoice", exact: true }).click();
   await expect(page.locator("body")).toHaveClass(/lpk-scroll-lock/);
   await expect(page.locator("body")).not.toHaveAttribute("style", /overflow/);
   await page.getByRole("button", { name: "Close payment help" }).click();
