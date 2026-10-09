@@ -1,15 +1,18 @@
-import React from "react";
+import React, { useState } from "react";
+import previewFixtures from "./preview-invoices.json";
 import ReactDOM from "react-dom/client";
 import { LightningPaymentHelp } from "lightning-pay-kit";
 import "lightning-pay-kit/styles.css";
 import "./playground.css";
 
-// Synthetic regtest-format fixture with a fake signature. It cannot be paid.
-const invoice = "lnbcrt25u1pj48ugqpp5qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqsp5ppppppppppppppppppppppppppppppppppppppppppppppppppppdpy2dukuargv46xjceqv3jk6meqd9h8vmmfvdjsqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqm5chdv";
+// Synthetic mainnet-format fixtures have invalid zero signatures and cannot be paid.
 
 const repositoryUrl = "https://github.com/pseudozach/lightning-pay-kit";
 
 export function App() {
+  const [amount, setAmount] = useState("1000");
+  const [pastedInvoice, setPastedInvoice] = useState("");
+  const invoice = pastedInvoice.trim() || previewFixtures.invoices[amount as keyof typeof previewFixtures.invoices];
   return (
     <main>
       <nav aria-label="Primary navigation" className="site-nav">
@@ -20,7 +23,7 @@ export function App() {
         <div className="nav-links">
           <a href="#install">Get started</a>
           <a href={repositoryUrl}>GitHub</a>
-          <span className="version">v0.1.3</span>
+          <span className="version">v0.2.0</span>
         </div>
       </nav>
 
@@ -30,7 +33,7 @@ export function App() {
           <h1>Help anyone pay a <em>Lightning invoice.</em></h1>
           <p className="lede">
             A lightweight React component with a verified directory of wallets, payment apps,
-            exchanges, and swaps—searchable by provider or country.
+            exchanges, and swaps—searchable by wallet, coin, network, or country.
           </p>
           <div className="hero-actions">
             <a className="primary-action" href="#demo">Try the component</a>
@@ -46,31 +49,44 @@ export function App() {
         <article className="invoice-card" id="demo" aria-label="Synthetic invoice example">
           <div className="invoice-card-topline">
             <span>Live component</span>
-            <span className="fake-label">Safe synthetic invoice</span>
+            <span className="fake-label">{pastedInvoice.trim() ? "Your pasted invoice" : "Synthetic · cannot be paid"}</span>
           </div>
           <p className="invoice-purpose">Send a text message</p>
           <div className="amount-row">
-            <strong>2,500</strong>
+            <strong>{pastedInvoice.trim() ? "Your invoice" : Number(amount).toLocaleString("en-US")}</strong>
             <span>sats</span>
+          </div>
+          <div className="preview-controls">
+            <label htmlFor="preview-amount">Preview invoice amount</label>
+            <select id="preview-amount" value={amount} onChange={(event) => { setAmount(event.currentTarget.value); setPastedInvoice(""); }}>
+              {Object.keys(previewFixtures.invoices).map((value) => <option key={value} value={value}>{Number(value).toLocaleString("en-US")} sats</option>)}
+            </select>
+            <p>Try 200 vs 1,000 sats, then search <strong>USDT Polygon</strong>, <strong>USDT Ethereum</strong>, USDC, Ark, Spark, or Blitz.</p>
+            <details>
+              <summary>Or test an invoice you already have</summary>
+              <label htmlFor="preview-invoice">Paste BOLT11 invoice</label>
+              <textarea id="preview-invoice" value={pastedInvoice} maxLength={16384} onChange={(event) => setPastedInvoice(event.currentTarget.value)} placeholder="lnbc…" />
+              <p>The invoice stays in your browser; the preview creates no order and sends no payment.</p>
+            </details>
           </div>
           <div className="invoice-preview">{invoice.slice(0, 26)}…{invoice.slice(-12)}</div>
           <div className="help-row">
             <div>
               <strong>Need help paying?</strong>
-              <span>Search by wallet, exchange, or country.</span>
+              <span>Search by coin, wallet, network, or country.</span>
             </div>
-            <LightningPaymentHelp invoice={invoice} now={1_700_000_001} trigger="button" />
+            <LightningPaymentHelp invoice={invoice} {...(pastedInvoice.trim() ? {} : { now: previewFixtures.now + 1 })} trigger="button" />
           </div>
         </article>
       </section>
 
       <section className="showcase" aria-labelledby="showcase-title">
         <div className="showcase-heading">
-          <p className="kicker">Provider-first by design</p>
+          <p className="kicker">Invoice-aware routing</p>
           <h2 id="showcase-title">The shortest path from invoice to a useful option.</h2>
           <p>
-            Country-aware search prioritizes local services while keeping genuinely global apps
-            visible. Every card explains its Lightning mechanism and availability.
+            Token search keeps networks separate and compares your invoice with published payout limits.
+            Below-minimum paths cannot be selected. Unknown limits stay unknown; fees and refunds belong to the provider.
           </p>
         </div>
         <div className="screenshot-frame">

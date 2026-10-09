@@ -1,3 +1,10 @@
+.preview-controls { display: grid; gap: .6rem; margin: 1rem 0; min-width: 0; }
+.preview-controls label { font-size: .8rem; color: #f4f4ed; }
+.preview-controls select, .preview-controls textarea { width: 100%; min-width: 0; min-height: 44px; color: #f4f4ed; background: #181a15; border: 1px solid #73776b; border-radius: .5rem; padding: .65rem; font: inherit; }
+.preview-controls textarea { min-height: 90px; resize: vertical; overflow-wrap: anywhere; }
+.preview-controls p { color: #aaaca4; font-size: .8rem; line-height: 1.5; margin: .3rem 0; }
+.preview-controls summary { cursor: pointer; min-height: 44px; padding-top: .65rem; font-size: .8rem; }
+
 :root {
   background: #0d0e0c;
   color: #f4f4ed;

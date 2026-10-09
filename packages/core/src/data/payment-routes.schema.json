@@ -1,0 +1,55 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Lightning payment route database",
+  "description": "Untrusted asset/network-to-mainnet-Lightning metadata. Runtime validation additionally enforces real dates, credential-free HTTPS, maximum >= minimum using bigint, and unique route IDs. Limits become unknown after 30 days; no record is a payment or quote guarantee.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schemaVersion", "updatedAt", "routes"],
+  "properties": {
+    "schemaVersion": { "const": 1 },
+    "updatedAt": { "$ref": "#/$defs/date" },
+    "routes": { "type": "array", "maxItems": 10000, "items": { "$ref": "#/$defs/route" } }
+  },
+  "$defs": {
+    "date": { "type": "string", "format": "date", "pattern": "^\\d{4}-\\d{2}-\\d{2}$" },
+    "https": { "type": "string", "minLength": 1, "maxLength": 2048, "format": "uri", "pattern": "^https://[^\\s/@]+(?:[/?#][^\\s]*)?$" },
+    "id": { "type": "string", "minLength": 1, "maxLength": 100, "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$" },
+    "text": { "type": "string", "minLength": 1, "pattern": "^(?!\\s)(?![\\s\\S]*[\\u0000-\\u001f\\u007f])(?![\\s\\S]*\\s$)[\\s\\S]+$" },
+    "sats": { "type": "string", "pattern": "^[1-9]\\d{0,29}$" },
+    "evidence": {
+      "type": "object", "additionalProperties": false, "required": ["url", "claim", "checkedAt"],
+      "properties": {
+        "url": { "$ref": "#/$defs/https" },
+        "claim": { "$ref": "#/$defs/text", "maxLength": 300 },
+        "checkedAt": { "$ref": "#/$defs/date" }
+      }
+    },
+    "limits": {
+      "type": "object", "additionalProperties": false, "required": ["checkedAt", "sourceUrl"],
+      "properties": {
+        "minimumSats": { "$ref": "#/$defs/sats" },
+        "maximumSats": { "$ref": "#/$defs/sats" },
+        "minimumExclusive": { "type": "boolean" },
+        "checkedAt": { "$ref": "#/$defs/date" },
+        "sourceUrl": { "$ref": "#/$defs/https" }
+      }
+    },
+    "route": {
+      "type": "object", "additionalProperties": false,
+      "required": ["id", "providerId", "assetSymbol", "assetName", "network", "aliases", "evidence", "lastVerifiedAt"],
+      "properties": {
+        "id": { "$ref": "#/$defs/id" },
+        "providerId": { "$ref": "#/$defs/id" },
+        "assetSymbol": { "$ref": "#/$defs/text", "maxLength": 24 },
+        "assetName": { "$ref": "#/$defs/text", "maxLength": 80 },
+        "network": { "$ref": "#/$defs/text", "maxLength": 80 },
+        "aliases": { "type": "array", "maxItems": 24, "items": { "$ref": "#/$defs/text", "maxLength": 80 } },
+        "evidence": { "type": "array", "minItems": 1, "maxItems": 24, "items": { "$ref": "#/$defs/evidence" } },
+        "lastVerifiedAt": { "$ref": "#/$defs/date" },
+        "limits": { "$ref": "#/$defs/limits" },
+        "refundNote": { "$ref": "#/$defs/text", "maxLength": 600 },
+        "notes": { "$ref": "#/$defs/text", "maxLength": 600 }
+      }
+    }
+  }
+}

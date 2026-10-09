@@ -70,7 +70,10 @@ export interface AffiliateOverride {
   readonly disclosure: string;
 }
 
-export type AffiliateOverrides = Readonly<Record<string, AffiliateOverride | null>>;
+/** String codes are supported only for verified FixedFloat and BitcoinVN ref parameters.
+ * Objects preserve the existing disclosed HTTPS destination API; null disables a default.
+ */
+export type AffiliateOverrides = Readonly<Record<string, AffiliateOverride | string | null>>;
 
 export interface ProviderView extends PaymentProvider {
   readonly destinationUrl: string;
@@ -82,9 +85,13 @@ export interface ProviderRegionPresentation {
   readonly label: string;
 }
 
-export const defaultAffiliateOverrides: AffiliateOverrides = Object.freeze({
+export const defaultAffiliateOverrides: Readonly<Record<string, AffiliateOverride | null>> = Object.freeze({
   fixedfloat: Object.freeze({
     url: "https://ff.io/?ref=pmdxabka",
+    disclosure: "Affiliate"
+  }),
+  bitcoinvn: Object.freeze({
+    url: "https://bitcoinvn.io/?settle=btcln&ref=efd36219af705e28",
     disclosure: "Affiliate"
   })
 });
@@ -108,7 +115,11 @@ const lightningModeSchema = z.enum([
   "swap",
   "unknown"
 ]);
-const httpsUrlSchema = z.string().superRefine((value, context) => {
+const httpsUrlSchema = z.string().max(2048).superRefine((value, context) => {
+  if ([...value].some((character) => { const code = character.charCodeAt(0); return code < 32 || (code >= 127 && code <= 159); })) {
+    context.addIssue({ code: "custom", message: "URL control characters are not allowed." });
+    return;
+  }
   try {
     const url = new URL(value);
     if (url.protocol !== "https:" || url.username || url.password) {
@@ -153,14 +164,14 @@ const regionsSchema = z
 
 const providerSchema = z
   .object({
-    id: z.string().regex(/^[a-z0-9]+(?:-[a-z0-9]+)*$/),
+    id: z.string().max(64).regex(/^[a-z0-9]+(?:-[a-z0-9]+)*$/),
     name: z.string().trim().min(1).max(80),
     aliases: z.array(z.string().trim().min(1).max(40)).max(12),
     capabilitySummary: z.string().trim().min(45).max(160).optional(),
     lightningModes: z.array(lightningModeSchema).min(1).max(4).optional(),
     category: z.enum(["wallet", "payment_app", "exchange", "swap"]),
     custody: z.enum(["custodial", "self_custodial", "configurable", "swap_based"]),
-    platforms: z.array(z.enum(["ios", "android", "web", "desktop", "extension"])).min(1),
+    platforms: z.array(z.enum(["ios", "android", "web", "desktop", "extension"])).min(1).max(5),
     regions: regionsSchema,
     action: z
       .object({
@@ -182,7 +193,7 @@ const providerSchema = z
           })
           .strict()
       )
-      .min(1),
+      .min(1).max(32),
     accountRequired: z.boolean(),
     kycRequired: z.boolean()
   })
@@ -234,9 +245,11 @@ export function filterProviders(
   providers: readonly PaymentProvider[],
   filter: ProviderFilter
 ): PaymentProvider[] {
+  if (!Array.isArray(providers) || providers.length > 1000) return [];
   const query = filter.query?.trim().toLowerCase() ?? "";
   const countryCode = resolveCountryQuery(query);
-  const validatedProviders = providers.flatMap((item) => {
+  const validatedProviders = providers.flatMap((item: PaymentProvider) => {
+    if (Array.isArray(item?.evidence) && item.evidence.length > 32) return [];
     const parsed = providerSchema.safeParse(item);
     return parsed.success ? [parsed.data] : [];
   });
@@ -326,14 +339,30 @@ export function applyAffiliateOverrides(
   return providers.map((item) => {
     const hasHostOverride = Object.prototype.hasOwnProperty.call(overrides, item.id);
     const bundledDefault =
-      item.id === "fixedfloat" && item.action.url === "https://ff.io/"
-        ? defaultAffiliateOverrides.fixedfloat
+      (item.id === "fixedfloat" && item.action.url === "https://ff.io/") ||
+      (item.id === "bitcoinvn" && item.action.url === "https://bitcoinvn.io/?settle=btcln")
+        ? defaultAffiliateOverrides[item.id]
         : undefined;
     const override = hasHostOverride ? overrides[item.id] : bundledDefault;
     if (override === null || override === undefined) {
       return { ...item, destinationUrl: item.action.url };
     }
-    const safeOverride = affiliateOverrideSchema.parse(override);
+    let resolvedOverride: AffiliateOverride;
+    if (typeof override === "string") {
+      const base = item.id === "fixedfloat" ? "https://ff.io/"
+        : item.id === "bitcoinvn" ? "https://bitcoinvn.io/?settle=btcln" : undefined;
+      if (!base) throw new Error(`No verified referral-code syntax for provider: ${item.id}`);
+      const code = z.string().min(1).max(200).refine(value => !/\s/u.test(value) && ![...value].some(character => {
+        const point = character.charCodeAt(0);
+        return point < 32 || (point >= 127 && point <= 159);
+      }), "Referral codes must not contain whitespace or control characters.").parse(override);
+      const url = new URL(base);
+      url.searchParams.set("ref", code);
+      resolvedOverride = { url: url.href, disclosure: "Affiliate" };
+    } else {
+      resolvedOverride = override;
+    }
+    const safeOverride = affiliateOverrideSchema.parse(resolvedOverride);
     return {
       ...item,
       destinationUrl: safeOverride.url,
