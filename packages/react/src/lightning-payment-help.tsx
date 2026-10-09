@@ -1,4 +1,4 @@
-import { defaultProviders, type AffiliateOverrides, type HandoffEvent, type PaymentProvider } from "@lightning-pay-kit/core";
+import { defaultProviders, type AffiliateOverrides, type HandoffEvent, type PaymentRoute, type PaymentProvider } from "@lightning-pay-kit/core";
 import React, { type ReactElement, type ReactNode } from "react";
 import { LightningPaymentModal } from "./lightning-payment-modal.js";
 import { useLightningPaymentHelp } from "./use-lightning-payment-help.js";
@@ -7,6 +7,7 @@ export interface LightningPaymentHelpProps {
   readonly invoice: string;
   readonly trigger?: "icon" | "button";
   readonly providers?: readonly PaymentProvider[];
+  readonly paymentRoutes?: readonly PaymentRoute[];
   readonly affiliateOverrides?: AffiliateOverrides;
   readonly onHandoff?: (event: HandoffEvent) => void;
   readonly onOpenChange?: (open: boolean) => void;
@@ -22,6 +23,7 @@ export function LightningPaymentHelp({
   invoice,
   trigger = "icon",
   providers = defaultProviders,
+  paymentRoutes,
   affiliateOverrides,
   onHandoff,
   onOpenChange,
@@ -35,6 +37,7 @@ export function LightningPaymentHelp({
     isOpen: controller.isOpen,
     onClose: controller.close,
     providers,
+    ...(paymentRoutes === undefined ? {} : { paymentRoutes }),
     ...(affiliateOverrides === undefined ? {} : { affiliateOverrides }),
     ...(onHandoff === undefined ? {} : { onHandoff }),
     ...(now === undefined ? {} : { now })

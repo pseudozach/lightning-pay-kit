@@ -7,5 +7,7 @@ export type {
   LightningPaymentHelpController,
   UseLightningPaymentHelpOptions
 } from "./use-lightning-payment-help.js";
+export { BitcoinVNExchangeWidget } from "./bitcoinvn-exchange-widget.js";
+export type { BitcoinVNExchangeWidgetProps } from "./bitcoinvn-exchange-widget.js";
 export * from "@lightning-pay-kit/core";
 

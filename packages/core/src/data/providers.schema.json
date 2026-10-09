@@ -28,7 +28,8 @@
       "minItems": 1,
       "items": {
         "$ref": "#/$defs/provider"
-      }
+      },
+      "maxItems": 1000
     },
     "directorySources": {
       "type": "array",
@@ -63,7 +64,8 @@
       "properties": {
         "id": {
           "type": "string",
-          "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$"
+          "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$",
+          "maxLength": 64
         },
         "name": {
           "type": "string",
@@ -132,7 +134,8 @@
               "desktop",
               "extension"
             ]
-          }
+          },
+          "maxItems": 5
         },
         "regions": {
           "type": "object",
@@ -320,7 +323,8 @@
                 "format": "date"
               }
             }
-          }
+          },
+          "maxItems": 32
         },
         "accountRequired": {
           "type": "boolean"
@@ -377,7 +381,15 @@
       "pattern": "^https://",
       "not": {
         "pattern": "^https://[^/]*@"
-      }
+      },
+      "maxLength": 2048,
+      "allOf": [
+        {
+          "not": {
+            "pattern": "[\\u0000-\\u001f\\u007f-\\u009f]"
+          }
+        }
+      ]
     },
     "countryCode": {
       "type": "string",

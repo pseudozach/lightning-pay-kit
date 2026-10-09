@@ -1,14 +1,21 @@
 import {
   applyAffiliateOverrides,
   createHandoffEvent,
+  createPaymentRouteHandoff,
   defaultProviders,
+  defaultPaymentRoutes,
+  discoverPaymentRoutes,
+  isAssetQuery,
   filterProviders,
   getProviderRegionPresentation,
   parseInvoiceMetadata,
   type AffiliateOverrides,
   type HandoffEvent,
+  type PaymentRoute,
   type PaymentProvider
 } from "@lightning-pay-kit/core";
+import { BitcoinVNExchangeWidget } from "./bitcoinvn-exchange-widget.js";
+import { PaymentRouteResults } from "./payment-route-results.js";
 import { createPortal } from "react-dom";
 import React, {
   useEffect,
@@ -66,6 +73,7 @@ export interface LightningPaymentModalProps {
   readonly isOpen: boolean;
   readonly onClose: () => void;
   readonly providers?: readonly PaymentProvider[];
+  readonly paymentRoutes?: readonly PaymentRoute[];
   readonly affiliateOverrides?: AffiliateOverrides;
   readonly onHandoff?: (event: HandoffEvent) => void;
   readonly now?: number;
@@ -94,6 +102,7 @@ export function LightningPaymentModal({
   isOpen,
   onClose,
   providers = defaultProviders,
+  paymentRoutes = defaultPaymentRoutes,
   affiliateOverrides = {},
   onHandoff,
   now,
@@ -105,6 +114,11 @@ export function LightningPaymentModal({
   const [query, setQuery] = useState("");
   const [category, setCategory] = useState<Category>("all");
   const [copyStatus, setCopyStatus] = useState("");
+  const [bitcoinvnWidgetOpen, setBitcoinvnWidgetOpen] = useState(false);
+  const widgetCloseRef = useRef<HTMLButtonElement>(null);
+  const widgetTriggerRef = useRef<HTMLAnchorElement | null>(null);
+  useEffect(() => { setBitcoinvnWidgetOpen(false); }, [isOpen, invoice]);
+  useEffect(() => { if (bitcoinvnWidgetOpen) widgetCloseRef.current?.focus(); }, [bitcoinvnWidgetOpen]);
   const [canUsePortal, setCanUsePortal] = useState(false);
 
   useEffect(() => {
@@ -126,6 +140,24 @@ export function LightningPaymentModal({
       ),
     [affiliateOverrides, category, providers, query]
   );
+
+  const bitcoinvnView = useMemo(() => applyAffiliateOverrides(providers.filter(provider => provider.id === "bitcoinvn"), affiliateOverrides)[0], [providers, affiliateOverrides]);
+
+  const satoraDefaultRoute = useMemo(() => metadata.ok ? discoverPaymentRoutes(providers, paymentRoutes, {
+    query: "USDC Arbitrum", amountMsat: metadata.amountMsat, invoiceNetwork: metadata.network,
+    ...(now === undefined ? {} : { now })
+  }).find(view => view.provider.id === "satora" && view.route.assetSymbol === "USDC" && view.route.network === "Arbitrum") : undefined, [providers, paymentRoutes, metadata, now]);
+
+  const fixedfloatDefaultRoute = useMemo(() => metadata.ok ? discoverPaymentRoutes(providers, paymentRoutes, {
+    query: "USDT Tron", amountMsat: metadata.amountMsat, invoiceNetwork: metadata.network,
+    ...(now === undefined ? {} : { now })
+  }).find(view => view.provider.id === "fixedfloat" && view.route.id === "fixedfloat-usdttrc") : undefined, [providers, paymentRoutes, metadata, now]);
+
+  const tokenSearch = isAssetQuery(query, paymentRoutes);
+  const matchedRoutes = useMemo(() => metadata.ok ? discoverPaymentRoutes(providers, paymentRoutes, {
+    query, category, amountMsat: metadata.amountMsat, invoiceNetwork: metadata.network,
+    ...(now === undefined ? {} : { now })
+  }) : [], [providers, paymentRoutes, query, category, metadata, now]);
 
   useEffect(() => {
     if (!isOpen || !canUsePortal) return;
@@ -198,7 +230,11 @@ export function LightningPaymentModal({
     searchInputRef.current?.focus();
   };
 
-  const copyForProvider = (providerId: string) => {
+  const copyForProvider = (providerId: string, invoicePrefilled = false) => {
+    if (invoicePrefilled) {
+      onHandoff?.(createHandoffEvent("provider_https", providerId));
+      return;
+    }
     if (normalizedInvoice && navigator.clipboard?.writeText) {
       void navigator.clipboard.writeText(normalizedInvoice).then(
         () => setCopyStatus(""),
@@ -255,7 +291,7 @@ export function LightningPaymentModal({
                     <input
                       aria-label="Search payment providers"
                       onChange={(event) => setQuery(event.currentTarget.value)}
-                      placeholder="Search apps, exchanges, or country…"
+                      placeholder="Search wallets, coins (USDT), or country…"
                       ref={searchInputRef}
                       type="search"
                       value={query}
@@ -287,24 +323,51 @@ export function LightningPaymentModal({
                   ))}
                 </div>
 
-                {visibleProviders.length === 0 ? (
+                {bitcoinvnWidgetOpen ? <section aria-label="BitcoinVN exchange widget">
+                  <button ref={widgetCloseRef} type="button" className="lpk-chip" onClick={() => { setBitcoinvnWidgetOpen(false); (widgetTriggerRef.current?.isConnected ? widgetTriggerRef.current : searchInputRef.current)?.focus(); }}>Close BitcoinVN exchange widget</button>
+                  {bitcoinvnView ? <a href={bitcoinvnView.destinationUrl} target="_blank" rel={bitcoinvnView.affiliateDisclosure ? "sponsored noopener noreferrer" : "noopener noreferrer"}>Open BitcoinVN in a new tab</a> : null}
+                  <p className="lpk-route-note">Lightning is selected. Paste your invoice. The widget does not prefill or pay it automatically.</p>
+                  <BitcoinVNExchangeWidget affiliateOverrides={affiliateOverrides} />
+                </section> : null}
+                {tokenSearch ? (matchedRoutes.length > 0 ?
+                  <PaymentRouteResults invoice={invoice} now={now} routes={matchedRoutes} affiliateOverrides={affiliateOverrides} onContinue={copyForProvider} /> :
+                  <p className="lpk-empty">No verified token routes match this coin, network, and category.</p>
+                ) : visibleProviders.length === 0 ? (
                   <p className="lpk-empty">No providers match this search.</p>
                 ) : (
                   <ul aria-label="Matching payment providers" className="lpk-provider-grid">
                     {visibleProviders.map((provider) => {
                       const region = getProviderRegionPresentation(provider, query);
+                      const defaultRoute = provider.id === "satora" && provider.destinationUrl === "https://app.satora.io/" ? satoraDefaultRoute
+                        : provider.id === "fixedfloat" ? fixedfloatDefaultRoute : undefined;
+                      const handoff = defaultRoute ? createPaymentRouteHandoff(defaultRoute, invoice, { affiliateOverrides, ...(now === undefined ? {} : { now }) }) : undefined;
+                      const usesPrefill = handoff?.invoicePrefilled === true;
+                      const chooseSatoraRoute = provider.id === "satora" && provider.destinationUrl === "https://app.satora.io/" && metadata.ok && !metadata.expired && !usesPrefill;
                       return (
                         <li key={provider.id}>
                           <a
                             className="lpk-provider"
-                            href={provider.destinationUrl}
-                            onClick={() => copyForProvider(provider.id)}
+                            href={chooseSatoraRoute ? "#satora-token-routes" : usesPrefill ? handoff.url : provider.destinationUrl}
+                            onClick={(event) => {
+                              if (chooseSatoraRoute) {
+                                event.preventDefault();
+                                setQuery("USDC");
+                                searchInputRef.current?.focus();
+                                return;
+                              }
+                              if (provider.id === "bitcoinvn" && new URL(provider.destinationUrl).origin === "https://bitcoinvn.io" && !event.ctrlKey && !event.metaKey && !event.shiftKey && !event.altKey) {
+                                event.preventDefault();
+                                widgetTriggerRef.current = event.currentTarget;
+                                setBitcoinvnWidgetOpen(true);
+                              }
+                              copyForProvider(provider.id, usesPrefill);
+                            }}
                             rel={
                               provider.affiliateDisclosure
                                 ? "sponsored noopener noreferrer"
                                 : "noopener noreferrer"
                             }
-                            target="_blank"
+                            target={chooseSatoraRoute ? undefined : "_blank"}
                           >
                             <span aria-hidden="true" className="lpk-provider-mark">
                               {initials(provider.name)}
@@ -320,6 +383,9 @@ export function LightningPaymentModal({
                                 ) : null}
                               </span>
                               <span>{provider.capabilitySummary ?? provider.action.label}</span>
+                              {chooseSatoraRoute ? <span className="lpk-route-note">Choose a coin/network to check this invoice’s limits before opening Satora.</span> : null}
+                              {usesPrefill ? <span className="lpk-route-note">Starts with {provider.id === "fixedfloat" ? "USDT on Tron" : "USDC on Arbitrum"} → Lightning. Invoice and exact amount prefilled; change coin/network at {provider.name}.</span> : null}
+                              {provider.category === "swap" || provider.lightningModes?.includes("swap") ? <span className="lpk-route-note">Check invoice limits: search your coin and network before choosing a swap.</span> : null}
                               <span className="lpk-provider-meta">
                                 <small className="lpk-meta-pill">{categoryLabels[provider.category]}</small>
                                 <small className="lpk-meta-pill">{custodyLabels[provider.custody]}</small>

@@ -1,0 +1,32 @@
+import AxeBuilder from "@axe-core/playwright";
+import { expect, test } from "@playwright/test";
+
+test("tiny invoice token routes are blocked honestly and networks stay separate", async ({ page }) => {
+  await page.goto("/lightning-pay-kit/");
+  await page.getByRole("combobox", { name: "Preview invoice amount" }).selectOption("200");
+  await page.getByRole("button", { name: "How to pay this invoice", exact: true }).click();
+  const dialog = page.getByRole("dialog");
+  const search = dialog.getByRole("searchbox", { name: "Search payment providers" });
+  await search.fill("USDT Polygon");
+  const satora = dialog.locator(".lpk-route-card").filter({ has: page.getByText("Satora", { exact: true }) });
+  await expect(satora).toHaveCount(1);
+  await expect(satora.getByText("Below provider minimum", { exact: true })).toBeVisible();
+  await expect(satora.getByText("Not available for this invoice.", { exact: true })).toBeVisible();
+  await expect(satora.getByRole("link", { name: /Continue with/ })).toHaveCount(0);
+  expect(await page.evaluate(() => document.documentElement.scrollWidth <= document.documentElement.clientWidth)).toBe(true);
+  expect((await new AxeBuilder({ page }).include(".lpk-dialog").analyze()).violations).toEqual([]);
+  await page.getByRole("button", { name: "Close payment help" }).click();
+  await page.getByRole("combobox", { name: "Preview invoice amount" }).selectOption("1000");
+  await page.getByRole("button", { name: "How to pay this invoice", exact: true }).click();
+  await search.fill("USDT Polygon");
+  await expect(satora.getByText("Meets published limits", { exact: true })).toBeVisible();
+  const prefill = new URL((await satora.getByRole("link", { name: /Continue with Satora/ }).getAttribute("href"))!);
+  expect(prefill.origin).toBe("https://app.satora.io");
+  expect(prefill.pathname).toBe("/137:USDT0/lightning:BTC");
+  expect(prefill.searchParams.get("targetAmount")).toBe("1000");
+  expect(prefill.searchParams.get("address")).toMatch(/^lnbc10000n1/);
+  await expect(satora.getByText(/Refund warning:/)).toBeVisible();
+  await search.fill("USDT Ethereum");
+  await expect(satora.getByText("Below provider minimum", { exact: true })).toBeVisible();
+  await expect(satora.getByText(/Minimum: 10,000 sats/)).toBeVisible();
+});

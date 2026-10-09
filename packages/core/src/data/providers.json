@@ -1,7 +1,7 @@
 {
   "$schema": "./providers.schema.json",
   "schemaVersion": 1,
-  "updatedAt": "2026-09-29",
+  "updatedAt": "2026-10-08",
   "directorySources": [
     {
       "name": "LightningExchanges",
@@ -41,6 +41,21 @@
       "lastCheckedAt": "2026-09-29",
       "role": "Discovers newer exchange and financial-app Lightning integrations omitted by older directories.",
       "limitations": "Vendor partnerships, UMA, merchant receipt, and arbitrary consumer BOLT11 withdrawal are not equivalent."
+    },
+    {
+      "name": "Lightsats wallet guide",
+      "url": "https://lightsats.com/guide/wallets",
+      "lastCheckedAt": "2026-10-08",
+      "role": "User-provided wallet discovery guide inspected before first-party research.",
+      "limitations": "Third-party names and lgt.st install links; does not establish current BOLT11 input or service state."
+    },
+    {
+      "name": "DarthCoin Lightning wallet comparison",
+      "url": "https://darth-coin.github.io/wallets/lightning-wallets-comparison-en.html",
+      "lastCheckedAt": "2026-10-08",
+      "sourceLastUpdatedAt": "2025-03-20",
+      "role": "User-provided category/name discovery guide inspected first.",
+      "limitations": "Community opinionated comparison; stale beta/classification claims. Its Spark link is legacy shesek remote-node software, not Spark L2. Its Muun custody claims are not first-party proof."
     }
   ],
   "providers": [
@@ -140,6 +155,60 @@
       "lightningModes": [
         "swap"
       ]
+    },
+    {
+      "id": "arkade-wallet",
+      "name": "Arkade Wallet",
+      "aliases": [
+        "Arkade"
+      ],
+      "capabilitySummary": "Swaps self-custodied Ark VTXOs to Lightning through a discovered RFQ solver.",
+      "lightningModes": [
+        "swap"
+      ],
+      "category": "wallet",
+      "custody": "self_custodial",
+      "platforms": [
+        "web",
+        "desktop"
+      ],
+      "regions": {
+        "scope": "unknown",
+        "label": "Availability varies",
+        "notes": "Mainnet RFQ solver availability and quoted limits apply. Amountless BOLT11 is rejected. Country restrictions are not exhaustively verified."
+      },
+      "action": {
+        "type": "copy_then_open",
+        "url": "https://arkade.money/",
+        "label": "Copy invoice, then open Arkade Wallet"
+      },
+      "serviceStatus": "active",
+      "verificationStatus": "verified",
+      "lastVerifiedAt": "2026-10-08",
+      "evidence": [
+        {
+          "url": "https://arkade.money/assets/index-CycToh1w.js",
+          "claim": "Live wallet bundle embeds commit 4860c047 and external invoice-to-RFQ send flow; it contains no Boltz payment client.",
+          "checkedAt": "2026-10-08"
+        },
+        {
+          "url": "https://github.com/arkade-os/wallet/blob/4860c0475aa2fd4f3dcf9ce4c1fa2aa68dbb272f/src/lib/lnSwap.ts#L46-L89",
+          "claim": "Deployed-commit source decodes user-supplied BOLT11, checks network and expiry, and rejects zero-amount invoices before contacting a solver.",
+          "checkedAt": "2026-10-08"
+        },
+        {
+          "url": "https://github.com/arkade-os/wallet/blob/4860c0475aa2fd4f3dcf9ce4c1fa2aa68dbb272f/src/screens/Wallet/Send/Details.tsx#L168-L231",
+          "claim": "Wallet funds the covenant in Ark VTXOs; solver pays the invoice and claims with preimage. Wallet tracks refund/settlement separately.",
+          "checkedAt": "2026-10-08"
+        },
+        {
+          "url": "https://github.com/arkade-os/wallet/blob/4860c0475aa2fd4f3dcf9ce4c1fa2aa68dbb272f/src/lib/beta-solver.card.json",
+          "claim": "Bundled mainnet beta solver card advertises an Arkade-to-BOLT11 market, 500–50,000 sat Lightning limits and 30-bps fee; quotes are binding.",
+          "checkedAt": "2026-10-08"
+        }
+      ],
+      "accountRequired": false,
+      "kycRequired": false
     },
     {
       "id": "belo",
@@ -316,36 +385,87 @@
       ]
     },
     {
+      "id": "bitbanana",
+      "name": "BitBanana",
+      "aliases": [],
+      "capabilitySummary": "Pays Lightning invoices through a connected LND, Core Lightning, or compatible wallet backend.",
+      "lightningModes": [
+        "remote_node"
+      ],
+      "category": "wallet",
+      "custody": "configurable",
+      "platforms": [
+        "android"
+      ],
+      "regions": {
+        "scope": "unknown",
+        "label": "Availability varies",
+        "notes": "Country and app-store coverage is not exhaustively verified; provider and payment-route restrictions may apply."
+      },
+      "action": {
+        "type": "copy_then_open",
+        "url": "https://bitbanana.app/",
+        "label": "Copy invoice, then open BitBanana"
+      },
+      "serviceStatus": "active",
+      "verificationStatus": "verified",
+      "lastVerifiedAt": "2026-10-08",
+      "evidence": [
+        {
+          "url": "https://bitbanana.app/",
+          "claim": "Android remote-node/wallet manager supports LND, Core Lightning, NWC and LndHub; provider says zero data collection.",
+          "checkedAt": "2026-10-08"
+        },
+        {
+          "url": "https://github.com/michaelWuensch/BitBanana/blob/v1.1.0/app/src/main/java/app/michaelwuensch/bitbanana/home/SendBSDFragment.java#L576-L585",
+          "claim": "Released v1.1.0 builds a payment request from a decoded BOLT11 invoice; amountless-invoice amount entry is implemented.",
+          "checkedAt": "2026-10-08"
+        },
+        {
+          "url": "https://github.com/michaelWuensch/BitBanana/releases/tag/v1.1.0",
+          "claim": "Production v1.1.0 security release published October 4, 2026.",
+          "checkedAt": "2026-10-08"
+        }
+      ],
+      "accountRequired": false,
+      "kycRequired": false
+    },
+    {
       "id": "bitcoinvn",
       "name": "BitcoinVN",
       "aliases": [],
       "category": "swap",
-      "custody": "swap_based",
+      "custody": "custodial",
       "platforms": [
         "web"
       ],
       "regions": {
-        "notes": "Availability and limits vary by account and jurisdiction.",
-        "scope": "unknown"
+        "scope": "unknown",
+        "notes": "Jurisdiction availability requires provider terms review; no complete country allowlist established."
       },
       "action": {
         "type": "copy_then_open",
-        "url": "https://bitcoinvn.io/?deposit=btcln",
-        "label": "Open BitcoinVN Lightning payment instructions"
+        "url": "https://bitcoinvn.io/?settle=btcln",
+        "label": "Copy invoice, then open BitcoinVN"
       },
-      "serviceStatus": "unknown",
-      "verificationStatus": "needs_reverification",
-      "lastVerifiedAt": "2026-09-29",
+      "serviceStatus": "active",
+      "verificationStatus": "verified",
+      "lastVerifiedAt": "2026-10-08",
       "evidence": [
         {
-          "url": "https://github.com/theDavidCoen/LightningExchanges",
-          "claim": "Community directory lists BitcoinVN Lightning deposits and withdrawals.",
-          "checkedAt": "2026-09-29"
+          "url": "https://bitcoinvn.io/api/info",
+          "claim": "Live btcln has enabled=true, settleEnabled=true and required settleData.invoice.",
+          "checkedAt": "2026-10-08"
+        },
+        {
+          "url": "https://bitcoinvn.io/api/doc.json",
+          "claim": "Official API defines fixed settlement quote separately from order creation; public catalog includes network-specific token methods.",
+          "checkedAt": "2026-10-08"
         }
       ],
       "accountRequired": false,
       "kycRequired": false,
-      "capabilitySummary": "The exchange UI has exposed BTCLN, but arbitrary payout to an external invoice needs reverification.",
+      "capabilitySummary": "Custodial token swaps pay external Lightning invoices with network-specific quote limits.",
       "lightningModes": [
         "swap"
       ]
@@ -435,6 +555,55 @@
       "lightningModes": [
         "exchange_withdrawal"
       ]
+    },
+    {
+      "id": "bitkit",
+      "name": "Bitkit",
+      "aliases": [
+        "BitKit"
+      ],
+      "capabilitySummary": "Pays external Lightning invoices using an embedded node and funded spending channels.",
+      "lightningModes": [
+        "embedded_node"
+      ],
+      "category": "wallet",
+      "custody": "self_custodial",
+      "platforms": [
+        "ios",
+        "android"
+      ],
+      "regions": {
+        "scope": "unknown",
+        "label": "Availability varies",
+        "notes": "Country and app-store coverage is not exhaustively verified; provider and payment-route restrictions may apply."
+      },
+      "action": {
+        "type": "copy_then_open",
+        "url": "https://help.bitkit.to/hc/help-center/articles/1702651572-how-do-i-send-bitcoin",
+        "label": "Copy invoice, then open Bitkit"
+      },
+      "serviceStatus": "active",
+      "verificationStatus": "verified",
+      "lastVerifiedAt": "2026-10-08",
+      "evidence": [
+        {
+          "url": "https://help.bitkit.to/hc/help-center/articles/1702651572-how-do-i-send-bitcoin",
+          "claim": "Official instructions describe paste/scan invoices, instant payments, unified-invoice preference, and amountless-invoice amount entry.",
+          "checkedAt": "2026-10-08"
+        },
+        {
+          "url": "https://github.com/synonymdev/bitkit-ios/blob/v2.5.0/Bitkit/ViewModels/AppViewModel.swift#L639-L686",
+          "claim": "Released iOS v2.5.0 decodes external Lightning invoices, checks network/expiry/channel capacity, and opens the send flow.",
+          "checkedAt": "2026-10-08"
+        },
+        {
+          "url": "https://github.com/synonymdev/bitkit-ios/releases/tag/v2.5.0",
+          "claim": "Native iOS and Android repositories publish v2.5.0 on September 23, 2026; this is no longer merely the old React Native beta.",
+          "checkedAt": "2026-10-08"
+        }
+      ],
+      "accountRequired": false,
+      "kycRequired": false
     },
     {
       "id": "bitnob",
@@ -590,6 +759,56 @@
       ]
     },
     {
+      "id": "blitz-wallet",
+      "name": "Blitz Wallet",
+      "aliases": [
+        "Blitz"
+      ],
+      "capabilitySummary": "Pays external Lightning invoices from a Spark balance without opening Lightning channels.",
+      "lightningModes": [
+        "spark"
+      ],
+      "category": "wallet",
+      "custody": "self_custodial",
+      "platforms": [
+        "ios",
+        "android",
+        "web"
+      ],
+      "regions": {
+        "scope": "unknown",
+        "label": "Availability varies",
+        "notes": "Country and app-store coverage is not exhaustively verified; provider and payment-route restrictions may apply."
+      },
+      "action": {
+        "type": "copy_then_open",
+        "url": "https://blitz-wallet.com/pages/lightning-wallet/",
+        "label": "Copy invoice, then open Blitz Wallet"
+      },
+      "serviceStatus": "active",
+      "verificationStatus": "verified",
+      "lastVerifiedAt": "2026-10-08",
+      "evidence": [
+        {
+          "url": "https://blitz-wallet.com/pages/faq/",
+          "claim": "Blitz supports iOS, Android and web; outside contacts use a Lightning address or QR/invoice. Government ID is not required to create a wallet.",
+          "checkedAt": "2026-10-08"
+        },
+        {
+          "url": "https://blitz-wallet.com/pages/spark-wallet/",
+          "claim": "Blitz uses Spark for wallet payments; Spark operators participate in normal transfers and may delay or stop them.",
+          "checkedAt": "2026-10-08"
+        },
+        {
+          "url": "https://github.com/BlitzWallet/BlitzWallet/blob/Android-v0.7.15/app/components/admin/homeComponents/sendBitcoin/functions/processBolt11Invoice.js#L15-L145",
+          "claim": "Released Android-v0.7.15 processes user-supplied BOLT11 invoices and dispatches a Lightning payment via sparkPaymenWrapper.",
+          "checkedAt": "2026-10-08"
+        }
+      ],
+      "accountRequired": false,
+      "kycRequired": false
+    },
+    {
       "id": "blixt",
       "name": "Blixt Wallet",
       "aliases": [
@@ -723,31 +942,37 @@
         "Boltz Exchange"
       ],
       "category": "swap",
-      "custody": "swap_based",
+      "custody": "self_custodial",
       "platforms": [
         "web"
       ],
       "regions": {
-        "scope": "unknown"
+        "scope": "unknown",
+        "notes": "Jurisdiction availability requires provider terms review; no complete country allowlist established."
       },
       "action": {
         "type": "copy_then_open",
         "url": "https://boltz.exchange/",
-        "label": "Open Boltz Lightning payment instructions"
+        "label": "Copy invoice, then open Boltz"
       },
-      "serviceStatus": "suspended",
-      "verificationStatus": "verified",
-      "lastVerifiedAt": "2026-09-29",
+      "serviceStatus": "unknown",
+      "verificationStatus": "needs_reverification",
+      "lastVerifiedAt": "2026-10-08",
       "evidence": [
         {
-          "url": "https://github.com/BoltzExchange/boltz-web-app/blob/master/README.md",
-          "claim": "Official source documents non-custodial swaps; production Boltz domains failed current reachability checks.",
-          "checkedAt": "2026-09-29"
+          "url": "https://api.boltz.exchange/v2/swap/submarine",
+          "claim": "Production pair endpoint DNS failed from this environment; do not interpret as provider suspension.",
+          "checkedAt": "2026-10-08"
+        },
+        {
+          "url": "https://github.com/BoltzExchange/boltz-backend",
+          "claim": "Official submarine-swap implementation accepts invoice; live deployed limits unavailable during current recheck.",
+          "checkedAt": "2026-10-08"
         }
       ],
       "accountRequired": false,
       "kycRequired": false,
-      "capabilitySummary": "Non-custodial atomic swaps can pay Lightning invoices, but the public web service is currently unreachable.",
+      "capabilitySummary": "Atomic Bitcoin-family swaps can pay external Lightning invoices; live service availability and deployed limits are currently unverified.",
       "lightningModes": [
         "swap"
       ]
@@ -860,6 +1085,54 @@
       "lightningModes": [
         "exchange_withdrawal"
       ]
+    },
+    {
+      "id": "cake-wallet",
+      "name": "Cake Wallet",
+      "aliases": [],
+      "capabilitySummary": "Pays invoices from funded Spark via Breez SDK on iOS, Android and macOS only; not Windows/Linux.",
+      "lightningModes": [
+        "spark"
+      ],
+      "category": "wallet",
+      "custody": "self_custodial",
+      "platforms": [
+        "ios",
+        "android",
+        "desktop"
+      ],
+      "regions": {
+        "scope": "unknown",
+        "label": "Availability varies",
+        "notes": "Country and app-store coverage is not exhaustively verified; provider and payment-route restrictions may apply."
+      },
+      "action": {
+        "type": "copy_then_open",
+        "url": "https://docs.cakewallet.com/features/basic/bitcoin-lightning",
+        "label": "Copy invoice, then open Cake Wallet"
+      },
+      "serviceStatus": "active",
+      "verificationStatus": "verified",
+      "lastVerifiedAt": "2026-10-08",
+      "evidence": [
+        {
+          "url": "https://docs.cakewallet.com/features/basic/bitcoin-lightning#send-on-lightning",
+          "claim": "Paste or scan a Lightning invoice on Send; payment is routed over Lightning from the Spark spending balance via Breez SDK.",
+          "checkedAt": "2026-10-08"
+        },
+        {
+          "url": "https://docs.cakewallet.com/cryptos/bitcoin/",
+          "claim": "Lightning is supported only on iOS, Android and macOS; excluded on Windows/Linux, hardware wallets and keys/watch-only restores.",
+          "checkedAt": "2026-10-08"
+        },
+        {
+          "url": "https://github.com/cake-tech/cake_wallet/blob/v6.4.6/cw_bitcoin/lib/lightning/lightning_wallet.dart",
+          "claim": "Released v6.4.6 parses InputType_Bolt11Invoice, prepares a payment from the invoice BOLT11, and uses breez_sdk_spark_flutter.",
+          "checkedAt": "2026-10-08"
+        }
+      ],
+      "accountRequired": false,
+      "kycRequired": false
     },
     {
       "id": "cash-app",
@@ -1081,6 +1354,55 @@
       ]
     },
     {
+      "id": "electrum",
+      "name": "Electrum",
+      "aliases": [
+        "Electrum Wallet"
+      ],
+      "capabilitySummary": "Pays Lightning invoices through its own Lightning channels, with optional trampoline routing.",
+      "lightningModes": [
+        "embedded_node"
+      ],
+      "category": "wallet",
+      "custody": "self_custodial",
+      "platforms": [
+        "desktop",
+        "android"
+      ],
+      "regions": {
+        "scope": "unknown",
+        "label": "Availability varies",
+        "notes": "Country and app-store coverage is not exhaustively verified; provider and payment-route restrictions may apply."
+      },
+      "action": {
+        "type": "copy_then_open",
+        "url": "https://electrum.org/",
+        "label": "Copy invoice, then open Electrum"
+      },
+      "serviceStatus": "active",
+      "verificationStatus": "verified",
+      "lastVerifiedAt": "2026-10-08",
+      "evidence": [
+        {
+          "url": "https://electrum.org/",
+          "claim": "Official distribution currently publishes Electrum 4.8.2 for desktop and Android; no iOS version is listed.",
+          "checkedAt": "2026-10-08"
+        },
+        {
+          "url": "https://github.com/spesmilo/electrum/blob/4.8.2/electrum/gui/qt/send_tab.py",
+          "claim": "Released Send tab accepts a Lightning invoice and offers paste-from-clipboard and Pay controls.",
+          "checkedAt": "2026-10-08"
+        },
+        {
+          "url": "https://github.com/spesmilo/electrum/blob/4.8.2/electrum/payment_identifier.py",
+          "claim": "Released payment parser recognizes bare BOLT11 invoices and lightning URIs; local wallet software does not require provider signup or KYC.",
+          "checkedAt": "2026-10-08"
+        }
+      ],
+      "accountRequired": false,
+      "kycRequired": false
+    },
+    {
       "id": "fixedfloat",
       "name": "FixedFloat",
       "aliases": [
@@ -1099,26 +1421,31 @@
       "action": {
         "type": "copy_then_open",
         "url": "https://ff.io/",
-        "label": "Open FixedFloat Lightning swap"
+        "label": "Copy invoice, then open FixedFloat"
       },
       "serviceStatus": "active",
       "verificationStatus": "verified",
-      "lastVerifiedAt": "2026-09-29",
+      "lastVerifiedAt": "2026-10-08",
       "evidence": [
         {
           "url": "https://ff.io/",
-          "claim": "Live first-party swap UI lists Bitcoin (Lightning), code BTCLN, as an output and requests the recipient destination.",
-          "checkedAt": "2026-09-29"
+          "claim": "Current UI lists BTCLN as receive option, recipient textarea, invoice_ph and floatLNInvoice configuration.",
+          "checkedAt": "2026-10-08"
+        },
+        {
+          "url": "https://ff.io/api",
+          "claim": "XML limits are SOURCE currency amounts. Authenticated price endpoint exposes data.to.min/max; direction=to requests exact output.",
+          "checkedAt": "2026-10-08"
         },
         {
           "url": "https://ff.io/terms-of-service",
-          "claim": "Current terms document destination-based exchanges, fees, registration policy, and prohibited jurisdictions.",
-          "checkedAt": "2026-09-29"
+          "claim": "No compulsory registration; AML restrictions and named/open-ended prohibited jurisdictions apply.",
+          "checkedAt": "2026-10-08"
         }
       ],
       "accountRequired": false,
       "kycRequired": false,
-      "capabilitySummary": "Custodial swap service with Lightning payouts; no account required.",
+      "capabilitySummary": "Custodial crypto swaps pay Lightning invoices; payout limits require an authenticated quote.",
       "lightningModes": [
         "swap"
       ]
@@ -1230,6 +1557,53 @@
       "lightningModes": [
         "exchange_withdrawal"
       ]
+    },
+    {
+      "id": "lexe",
+      "name": "Lexe",
+      "aliases": [],
+      "capabilitySummary": "Pays through an always-online LDK node hosted in an attested secure enclave.",
+      "lightningModes": [
+        "hosted_node"
+      ],
+      "category": "wallet",
+      "custody": "self_custodial",
+      "platforms": [
+        "ios",
+        "android"
+      ],
+      "regions": {
+        "scope": "unknown",
+        "label": "Availability varies",
+        "notes": "Country and app-store coverage is not exhaustively verified; provider and payment-route restrictions may apply."
+      },
+      "action": {
+        "type": "copy_then_open",
+        "url": "https://docs.lexe.app/getting-started/",
+        "label": "Copy invoice, then open Lexe"
+      },
+      "serviceStatus": "active",
+      "verificationStatus": "verified",
+      "lastVerifiedAt": "2026-10-08",
+      "evidence": [
+        {
+          "url": "https://docs.lexe.app/getting-started/#send-your-first-payment",
+          "claim": "Send accepts a pasted payment string, explicitly including Lightning invoices (BOLT 11). Setup ends with Sign up; no identity-document step is documented.",
+          "checkedAt": "2026-10-08"
+        },
+        {
+          "url": "https://lexe.app",
+          "claim": "Self-custodial keys in secure hardware, hosted node, iOS and Android availability.",
+          "checkedAt": "2026-10-08"
+        },
+        {
+          "url": "https://github.com/lexe-app/lexe-public/releases/tag/app-v0.10.7%2B63",
+          "claim": "Public non-prerelease app v0.10.7+63 was published October 7, 2026, with Android and iOS artifacts.",
+          "checkedAt": "2026-10-08"
+        }
+      ],
+      "accountRequired": true,
+      "kycRequired": false
     },
     {
       "id": "lnmarkets",
@@ -1360,32 +1734,37 @@
       "name": "Mt Pelerin",
       "aliases": [],
       "category": "swap",
-      "custody": "swap_based",
+      "custody": "custodial",
       "platforms": [
         "web"
       ],
       "regions": {
-        "notes": "Availability and limits vary by account and jurisdiction.",
-        "scope": "unknown"
+        "scope": "unknown",
+        "notes": "Jurisdiction availability requires provider terms review; no complete country allowlist established."
       },
       "action": {
         "type": "copy_then_open",
-        "url": "https://www.mtpelerin.com/blog/launching-bitcoin-lightning",
-        "label": "Open Mt Pelerin Lightning payment instructions"
+        "url": "https://www.mtpelerin.com/swap-crypto",
+        "label": "Copy invoice, then open Mt Pelerin"
       },
       "serviceStatus": "active",
       "verificationStatus": "needs_reverification",
-      "lastVerifiedAt": "2026-09-29",
+      "lastVerifiedAt": "2026-10-08",
       "evidence": [
         {
           "url": "https://www.mtpelerin.com/blog/launching-bitcoin-lightning",
-          "claim": "First-party launch article documents Lightning support; current invoice flow was not reverified.",
-          "checkedAt": "2026-09-29"
+          "claim": "Lightning purchase, wallet QR payment and cash-out are documented; not proof of direct stablecoin-to-external-invoice swap.",
+          "checkedAt": "2026-10-08"
+        },
+        {
+          "url": "https://www.mtpelerin.com/swap-crypto",
+          "claim": "Official site links this swap destination; amount, token-network and external invoice acceptance still need route-specific verification.",
+          "checkedAt": "2026-10-08"
         }
       ],
       "accountRequired": false,
       "kycRequired": false,
-      "capabilitySummary": "Lightning brokerage was launched, but arbitrary external BOLT11 payout needs reverification.",
+      "capabilitySummary": "Brokerage and Bridge Wallet advertise Lightning; direct token-to-arbitrary-Lightning swap payout is not yet established.",
       "lightningModes": [
         "swap"
       ]
@@ -1559,6 +1938,50 @@
       ]
     },
     {
+      "id": "open-bitcoin-wallet",
+      "name": "Open Bitcoin Wallet",
+      "aliases": [
+        "OBW"
+      ],
+      "capabilitySummary": "Routes invoices through an embedded node or optional hosted-channel balances.",
+      "lightningModes": [
+        "embedded_node",
+        "hosted_node"
+      ],
+      "category": "wallet",
+      "custody": "configurable",
+      "platforms": [
+        "android"
+      ],
+      "regions": {
+        "scope": "unknown",
+        "label": "Availability varies",
+        "notes": "Country and app-store coverage is not exhaustively verified; provider and payment-route restrictions may apply."
+      },
+      "action": {
+        "type": "copy_then_open",
+        "url": "https://github.com/nbd-wtf/obw#readme",
+        "label": "Copy invoice, then open Open Bitcoin Wallet"
+      },
+      "serviceStatus": "unknown",
+      "verificationStatus": "needs_reverification",
+      "lastVerifiedAt": "2026-10-08",
+      "evidence": [
+        {
+          "url": "https://github.com/nbd-wtf/obw",
+          "claim": "Official README describes standalone Lightning routing, split-invoice payments and optional hosted channels.",
+          "checkedAt": "2026-10-08"
+        },
+        {
+          "url": "https://github.com/nbd-wtf/obw/releases/tag/v0.2.1",
+          "claim": "Newest returned release was v0.2.1, December 31, 2022; current maintained availability was not established.",
+          "checkedAt": "2026-10-08"
+        }
+      ],
+      "accountRequired": false,
+      "kycRequired": false
+    },
+    {
       "id": "osmo",
       "name": "Osmo Money",
       "aliases": [],
@@ -1642,32 +2065,32 @@
       "name": "Pocket Bitcoin",
       "aliases": [],
       "category": "swap",
-      "custody": "swap_based",
+      "custody": "custodial",
       "platforms": [
         "web"
       ],
       "regions": {
-        "notes": "Availability and limits vary by account and jurisdiction.",
-        "scope": "unknown"
+        "scope": "unknown",
+        "notes": "Jurisdiction availability requires provider terms review; no complete country allowlist established."
       },
       "action": {
         "type": "copy_then_open",
         "url": "https://pocketbitcoin.com/lightning",
-        "label": "Open Pocket Bitcoin Lightning payment instructions"
+        "label": "Copy invoice, then open Pocket Bitcoin"
       },
       "serviceStatus": "active",
       "verificationStatus": "needs_reverification",
-      "lastVerifiedAt": "2026-09-29",
+      "lastVerifiedAt": "2026-10-08",
       "evidence": [
         {
           "url": "https://pocketbitcoin.com/lightning",
-          "claim": "Current page advertises buying and selling bitcoin with Lightning without explicit arbitrary invoice input.",
-          "checkedAt": "2026-09-29"
+          "claim": "Current site offers buying/selling Bitcoin with Lightning and refers to bank savings/payout; no token intake established.",
+          "checkedAt": "2026-10-08"
         }
       ],
       "accountRequired": false,
       "kycRequired": false,
-      "capabilitySummary": "Offers bank-to-Lightning purchases, but arbitrary external BOLT11 payout remains unverified.",
+      "capabilitySummary": "Bank-to-Lightning purchases are advertised; this is not a verified USDT or USDC-to-external-invoice swap provider.",
       "lightningModes": [
         "swap"
       ]
@@ -1860,6 +2283,49 @@
       ]
     },
     {
+      "id": "ride-the-lightning",
+      "name": "Ride The Lightning",
+      "aliases": [
+        "RTL"
+      ],
+      "capabilitySummary": "Pays external invoices from a connected LND, Core Lightning, or Eclair node.",
+      "lightningModes": [
+        "remote_node"
+      ],
+      "category": "wallet",
+      "custody": "configurable",
+      "platforms": [
+        "web"
+      ],
+      "regions": {
+        "scope": "unknown",
+        "label": "Availability varies",
+        "notes": "Country and app-store coverage is not exhaustively verified; provider and payment-route restrictions may apply."
+      },
+      "action": {
+        "type": "copy_then_open",
+        "url": "https://github.com/Ride-The-Lightning/RTL#readme",
+        "label": "Copy invoice, then open Ride The Lightning"
+      },
+      "serviceStatus": "active",
+      "verificationStatus": "verified",
+      "lastVerifiedAt": "2026-10-08",
+      "evidence": [
+        {
+          "url": "https://github.com/Ride-The-Lightning/RTL/blob/v0.15.13/src/app/lnd/transactions/send-payment-modal/send-payment.component.html#L10-L24",
+          "claim": "Tagged release presents an editable Payment Request field and required-input validation for external invoices.",
+          "checkedAt": "2026-10-08"
+        },
+        {
+          "url": "https://github.com/Ride-The-Lightning/RTL/releases/tag/v0.15.13",
+          "claim": "October 1, 2026 release forwards validated payment requests to LND/Core Lightning/Eclair; removes unavailable Boltz integration.",
+          "checkedAt": "2026-10-08"
+        }
+      ],
+      "accountRequired": false,
+      "kycRequired": false
+    },
+    {
       "id": "ripio",
       "name": "Ripio",
       "aliases": [],
@@ -1941,36 +2407,91 @@
       ]
     },
     {
+      "id": "satora",
+      "name": "Satora",
+      "aliases": [
+        "Lendaswap",
+        "Satora Swaps",
+        "Lendasat"
+      ],
+      "category": "swap",
+      "custody": "self_custodial",
+      "platforms": [
+        "web"
+      ],
+      "lightningModes": [
+        "swap"
+      ],
+      "capabilitySummary": "Atomic token swaps pay Lightning invoices; network floors and wrapped-Bitcoin refunds apply.",
+      "regions": {
+        "scope": "unknown",
+        "label": "Availability varies",
+        "notes": "Terms exclude sanctioned users/jurisdictions and permit screening. Complete country coverage is not established."
+      },
+      "action": {
+        "type": "copy_then_open",
+        "url": "https://app.satora.io/",
+        "label": "Copy invoice, then open Satora"
+      },
+      "serviceStatus": "active",
+      "verificationStatus": "verified",
+      "lastVerifiedAt": "2026-10-08",
+      "evidence": [
+        {
+          "url": "https://satora.io/",
+          "claim": "Official Satora site links app, docs and satoraHQ GitHub; identifies the former Lendasat/Lendaswap branding.",
+          "checkedAt": "2026-10-08"
+        },
+        {
+          "url": "https://docs.satora.io/llms-full.txt",
+          "claim": "EVM-to-BTC guide passes external amount-bearing BOLT11 as targetAddress; warns REST API is not a stable production contract.",
+          "checkedAt": "2026-10-08"
+        },
+        {
+          "url": "https://api.satora.io/swap-pairs",
+          "claim": "Live EVM-to-Lightning limits: Polygon/Arbitrum 356–2000000 sats, Ethereum 10000–2000000, Rootstock 1000–100000.",
+          "checkedAt": "2026-10-08"
+        },
+        {
+          "url": "https://satora.io/terms",
+          "claim": "Service does not require an account; keys remain on device; restricted jurisdictions and recovery responsibilities apply.",
+          "checkedAt": "2026-10-08"
+        }
+      ],
+      "accountRequired": false,
+      "kycRequired": false
+    },
+    {
       "id": "secure-shift",
       "name": "SecureShift",
       "aliases": [],
       "category": "swap",
-      "custody": "swap_based",
+      "custody": "custodial",
       "platforms": [
         "web"
       ],
       "regions": {
-        "notes": "Availability and limits vary by account and jurisdiction.",
-        "scope": "unknown"
+        "scope": "unknown",
+        "notes": "Jurisdiction availability requires provider terms review; no complete country allowlist established."
       },
       "action": {
         "type": "copy_then_open",
-        "url": "https://secureshift.io/blog/lightning-network",
-        "label": "Open SecureShift Lightning payment instructions"
+        "url": "https://secureshift.io/",
+        "label": "Copy invoice, then open SecureShift"
       },
-      "serviceStatus": "unknown",
+      "serviceStatus": "active",
       "verificationStatus": "needs_reverification",
-      "lastVerifiedAt": "2026-09-29",
+      "lastVerifiedAt": "2026-10-08",
       "evidence": [
         {
-          "url": "https://github.com/cointastical/Exchanges-With-LN",
-          "claim": "Community sources conflict over whether swaps to Lightning are supported.",
-          "checkedAt": "2026-09-29"
+          "url": "https://secureshift.io/blog/lightning-network",
+          "claim": "Reachable first-party educational article does not document a provider-specific BOLT11 swap payout.",
+          "checkedAt": "2026-10-08"
         }
       ],
       "accountRequired": false,
       "kycRequired": false,
-      "capabilitySummary": "Historical sources conflict on swaps to Lightning; current invoice payout remains unverified.",
+      "capabilitySummary": "The current Lightning article explains the protocol, not a SecureShift token-to-external-invoice settlement route.",
       "lightningModes": [
         "swap"
       ]
@@ -2025,32 +2546,32 @@
       "name": "SideShift.ai",
       "aliases": [],
       "category": "swap",
-      "custody": "swap_based",
+      "custody": "custodial",
       "platforms": [
         "web"
       ],
       "regions": {
-        "notes": "Availability and limits vary by account and jurisdiction.",
-        "scope": "unknown"
+        "scope": "unknown",
+        "notes": "Jurisdiction availability requires provider terms review; no complete country allowlist established."
       },
       "action": {
         "type": "copy_then_open",
         "url": "https://sideshift.ai/",
-        "label": "Open SideShift.ai Lightning payment instructions"
+        "label": "Copy invoice, then open SideShift.ai"
       },
-      "serviceStatus": "unknown",
+      "serviceStatus": "active",
       "verificationStatus": "needs_reverification",
-      "lastVerifiedAt": "2026-09-29",
+      "lastVerifiedAt": "2026-10-08",
       "evidence": [
         {
-          "url": "https://github.com/cointastical/Exchanges-With-LN",
-          "claim": "Community directory lists Lightning as a SideShift output asset.",
-          "checkedAt": "2026-09-29"
+          "url": "https://sideshift.ai/api/v2/coins",
+          "claim": "Current BTC networks are bitcoin and liquid, not Lightning. Exclude from token-to-BOLT11 results.",
+          "checkedAt": "2026-10-08"
         }
       ],
       "accountRequired": false,
       "kycRequired": false,
-      "capabilitySummary": "Lightning output was historically supported, but current arbitrary invoice payout needs verification.",
+      "capabilitySummary": "The live BTC catalog lists Bitcoin and Liquid only; no current Lightning payout route was established.",
       "lightningModes": [
         "swap"
       ]
@@ -2095,35 +2616,80 @@
       "name": "SimpleSwap",
       "aliases": [],
       "category": "swap",
-      "custody": "swap_based",
+      "custody": "custodial",
       "platforms": [
         "web"
       ],
       "regions": {
-        "notes": "Availability and limits vary by account and jurisdiction.",
-        "scope": "unknown"
+        "scope": "unknown",
+        "notes": "Jurisdiction availability requires provider terms review; no complete country allowlist established."
       },
       "action": {
         "type": "copy_then_open",
-        "url": "https://simpleswap.io/blog/btc-lightning-is-now-on-simpleswap",
-        "label": "Open SimpleSwap Lightning payment instructions"
+        "url": "https://simpleswap.io/",
+        "label": "Copy invoice, then open SimpleSwap"
       },
       "serviceStatus": "active",
       "verificationStatus": "needs_reverification",
-      "lastVerifiedAt": "2026-09-29",
+      "lastVerifiedAt": "2026-10-08",
       "evidence": [
         {
           "url": "https://simpleswap.io/blog/btc-lightning-is-now-on-simpleswap",
-          "claim": "First-party announcement documents BTC Lightning integration; current invoice input remains unverified.",
-          "checkedAt": "2026-09-29"
+          "claim": "Read current article: choose BTC Lightning as starting currency; uses deposit invoices. This is deposit-direction evidence only.",
+          "checkedAt": "2026-10-08"
         }
       ],
       "accountRequired": false,
       "kycRequired": false,
-      "capabilitySummary": "Lightning swaps were announced, but arbitrary external BOLT11 payout still needs verification.",
+      "capabilitySummary": "Official Lightning article describes BTC Lightning as the starting currency; arbitrary external invoice payout is not established.",
       "lightningModes": [
         "swap"
       ]
+    },
+    {
+      "id": "spark-wallet-legacy",
+      "name": "Spark Lightning Wallet (legacy)",
+      "aliases": [
+        "shesek Spark"
+      ],
+      "capabilitySummary": "Uses a separately managed Core Lightning node to pay invoices through a remote-control interface.",
+      "lightningModes": [
+        "remote_node"
+      ],
+      "category": "wallet",
+      "custody": "configurable",
+      "platforms": [
+        "android",
+        "desktop",
+        "web"
+      ],
+      "regions": {
+        "scope": "unknown",
+        "label": "Availability varies",
+        "notes": "Country and app-store coverage is not exhaustively verified; provider and payment-route restrictions may apply."
+      },
+      "action": {
+        "type": "copy_then_open",
+        "url": "https://github.com/shesek/spark-wallet#readme",
+        "label": "Copy invoice, then open Spark Lightning Wallet (legacy)"
+      },
+      "serviceStatus": "unknown",
+      "verificationStatus": "needs_reverification",
+      "lastVerifiedAt": "2026-10-08",
+      "evidence": [
+        {
+          "url": "https://github.com/shesek/spark-wallet",
+          "claim": "Official README identifies a c-lightning remote-control interface, not an all-in-one wallet or Spark L2.",
+          "checkedAt": "2026-10-08"
+        },
+        {
+          "url": "https://github.com/shesek/spark-wallet/releases/tag/v0.3.1",
+          "claim": "Newest returned release is v0.3.1, November 8, 2021; current supported availability is not established.",
+          "checkedAt": "2026-10-08"
+        }
+      ],
+      "accountRequired": false,
+      "kycRequired": false
     },
     {
       "id": "speed",
@@ -2174,32 +2740,32 @@
       "name": "StealthEX",
       "aliases": [],
       "category": "swap",
-      "custody": "swap_based",
+      "custody": "custodial",
       "platforms": [
         "web"
       ],
       "regions": {
-        "notes": "Availability and limits vary by account and jurisdiction.",
-        "scope": "unknown"
+        "scope": "unknown",
+        "notes": "Jurisdiction availability requires provider terms review; no complete country allowlist established."
       },
       "action": {
         "type": "copy_then_open",
-        "url": "https://stealthex.io/",
-        "label": "Open StealthEX Lightning payment instructions"
+        "url": "https://stealthex.io/exchange/new/",
+        "label": "Copy invoice, then open StealthEX"
       },
-      "serviceStatus": "unknown",
+      "serviceStatus": "active",
       "verificationStatus": "needs_reverification",
-      "lastVerifiedAt": "2026-09-29",
+      "lastVerifiedAt": "2026-10-08",
       "evidence": [
         {
-          "url": "https://github.com/theDavidCoen/LightningExchanges",
-          "claim": "Community directory lists Lightning support without strong current first-party instructions.",
-          "checkedAt": "2026-09-29"
+          "url": "https://api.stealthex.io/docs/openapi.json",
+          "claim": "Current V4 docs provide currencies, available routes and rates; unauthenticated GET currencies/networks returned 401, not proof of unsupported Lightning.",
+          "checkedAt": "2026-10-08"
         }
       ],
       "accountRequired": false,
       "kycRequired": false,
-      "capabilitySummary": "Directory reports Lightning support, but arbitrary external BOLT11 payout remains unverified.",
+      "capabilitySummary": "Current exchange API requires credentials; Lightning output and arbitrary external invoice payout remain unverified.",
       "lightningModes": [
         "swap"
       ]
@@ -2381,6 +2947,136 @@
       "lightningModes": [
         "unknown"
       ]
+    },
+    {
+      "id": "tether-wallet",
+      "name": "Tether Wallet",
+      "aliases": [],
+      "capabilitySummary": "Pays supplied Lightning invoices from its self-custodial Bitcoin Lightning balance.",
+      "lightningModes": [
+        "unknown"
+      ],
+      "category": "wallet",
+      "custody": "self_custodial",
+      "platforms": [
+        "ios",
+        "android"
+      ],
+      "regions": {
+        "scope": "unknown",
+        "label": "Availability varies",
+        "notes": "Terms prohibit sanctioned/embargoed persons and jurisdictions. Complete country coverage is unknown; compatible Lightning balance/network must be available."
+      },
+      "action": {
+        "type": "copy_then_open",
+        "url": "https://support.wallet.tether.io/hc/en-us/articles/26378945583388-Frequent-Asked-Questions-FAQ",
+        "label": "Copy invoice, then open Tether Wallet"
+      },
+      "serviceStatus": "active",
+      "verificationStatus": "verified",
+      "lastVerifiedAt": "2026-10-08",
+      "evidence": [
+        {
+          "url": "https://wallet.tether.io/",
+          "claim": "Official released consumer wallet advertises iOS/Android, self-custody and sending/receiving via BOLT11 invoices and LNURL.",
+          "checkedAt": "2026-10-08"
+        },
+        {
+          "url": "https://support.wallet.tether.io/hc/en-us/articles/26378945583388-Frequent-Asked-Questions-FAQ",
+          "claim": "FAQ says Send accepts a blockchain address or invoice for external wallets/services; Bitcoin Lightning supports BOLT11.",
+          "checkedAt": "2026-10-08"
+        },
+        {
+          "url": "https://support.wallet.tether.io/hc/en-us/articles/26231495697820-How-to-Create-a-New-Wallet",
+          "claim": "Complete onboarding requires tether.me username, email and email OTP; cloud backup/biometry optional. No identity-document step is listed.",
+          "checkedAt": "2026-10-08"
+        },
+        {
+          "url": "https://github.com/tetherto/tether-wallet-app-releases/releases/tag/1.12.0",
+          "claim": "Official APK repository linked by the consumer website released 1.12.0 on October 8, 2026.",
+          "checkedAt": "2026-10-08"
+        }
+      ],
+      "accountRequired": true,
+      "kycRequired": false
+    },
+    {
+      "id": "thunderhub",
+      "name": "ThunderHub",
+      "aliases": [],
+      "capabilitySummary": "Pays pasted Lightning invoices through the LND node connected to its self-hosted web interface.",
+      "lightningModes": [
+        "remote_node"
+      ],
+      "category": "wallet",
+      "custody": "configurable",
+      "platforms": [
+        "web"
+      ],
+      "regions": {
+        "scope": "unknown",
+        "label": "Availability varies",
+        "notes": "Country and app-store coverage is not exhaustively verified; provider and payment-route restrictions may apply."
+      },
+      "action": {
+        "type": "copy_then_open",
+        "url": "https://github.com/apotdevin/thunderhub#readme",
+        "label": "Copy invoice, then open ThunderHub"
+      },
+      "serviceStatus": "active",
+      "verificationStatus": "verified",
+      "lastVerifiedAt": "2026-10-08",
+      "evidence": [
+        {
+          "url": "https://github.com/apotdevin/thunderhub/blob/v0.19.0/src/client/src/views/home/account/pay/Pay.tsx#L79-L125",
+          "claim": "Released form accepts lnbc input, decodes BOLT11 and sends request into the pay mutation.",
+          "checkedAt": "2026-10-08"
+        },
+        {
+          "url": "https://github.com/apotdevin/thunderhub/releases/tag/v0.19.0",
+          "claim": "August 28, 2026 release retains native invoice payments but disables Boltz swaps and shows a service notice.",
+          "checkedAt": "2026-10-08"
+        }
+      ],
+      "accountRequired": false,
+      "kycRequired": false
+    },
+    {
+      "id": "trocador",
+      "name": "Trocador",
+      "aliases": [
+        "AnonPay"
+      ],
+      "category": "swap",
+      "custody": "custodial",
+      "platforms": [
+        "web"
+      ],
+      "lightningModes": [
+        "swap"
+      ],
+      "capabilitySummary": "Aggregator routes token payments through third-party exchangers; current Lightning payout availability and limits need reverification.",
+      "regions": {
+        "scope": "unknown",
+        "notes": "Availability, custody and compliance depend on the selected underlying exchanger."
+      },
+      "action": {
+        "type": "copy_then_open",
+        "url": "https://trocador.app/",
+        "label": "Copy invoice, then open Trocador"
+      },
+      "serviceStatus": "unknown",
+      "verificationStatus": "needs_reverification",
+      "lastVerifiedAt": "2026-10-08",
+      "evidence": [
+        {
+          "url": "https://trocador.app/docs/",
+          "claim": "Current HTTP 503 prevented reverifying payment-mode contract and limits; older 6400-sat observation is not current evidence.",
+          "checkedAt": "2026-10-08"
+        }
+      ],
+      "accountRequired": false,
+      "kycRequired": false
     },
     {
       "id": "vbtc",
