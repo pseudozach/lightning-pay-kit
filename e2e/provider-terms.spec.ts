@@ -8,8 +8,8 @@ test("provider terms are calm, collapsed and keyboard-expandable without hiding 
   const card = page.locator("article.lpk-route-card").filter({ has: page.getByText("FixedFloat", { exact: true }) });
   const details = card.locator("details");
   const summary = details.locator("summary");
-  const note = details.locator("p");
-  await expect(summary).toHaveText("Provider terms apply. Review fees, limits and refund conditions before depositing.");
+  const note = details.locator("p").first();
+  await expect(summary).toHaveText("Fees, limits & refund terms");
   await expect(details).toHaveJSProperty("open", false);
   await expect(note).toBeHidden();
   await expect(page.getByText("Refund warning:", { exact: true })).toHaveCount(0);

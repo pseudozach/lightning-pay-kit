@@ -1,4 +1,5 @@
 import React, { type ReactElement } from "react";
+import { categoryLabels } from "./provider-presentation.js";
 import { applyAffiliateOverrides, createPaymentRouteHandoff, type AffiliateOverrides, type PaymentRouteView } from "@lightning-pay-kit/core";
 
 const labels: Record<PaymentRouteView["eligibility"], string> = {
@@ -43,13 +44,17 @@ export function PaymentRouteResults({ routes, affiliateOverrides, onContinue, in
             <p className="lpk-route-reason">{reason}</p>
             {route.limits?.minimumSats ? <p className="lpk-route-limit">Minimum: {route.limits.minimumExclusive ? "more than " : ""}{sats(route.limits.minimumSats)} sats · published {route.limits.checkedAt}</p> : null}
             {route.limits?.maximumSats ? <p className="lpk-route-limit">Maximum: {sats(route.limits.maximumSats)} sats</p> : null}
-            {route.notes ? <p className="lpk-route-note">{route.notes}</p> : null}
-            {route.refundNote ? <details className="lpk-route-terms">
-              <summary>Provider terms apply. Review fees, limits and refund conditions before depositing.</summary>
-              <p>{route.refundNote}</p>
+            <div className="lpk-provider-meta">
+              <small className="lpk-meta-pill lpk-meta-pill-primary">{categoryLabels[provider.category]}</small>
+              <small className="lpk-meta-pill">{provider.accountRequired ? "Account required" : "No account"}</small>
+              {provider.kycRequired ? <small className="lpk-meta-pill">KYC</small> : null}
+              {usesPrefill && !isBlocked ? <small className="lpk-meta-pill" title="Invoice and exact output amount will be prefilled. Review the provider’s quote before funding.">Invoice prefilled</small> : null}
+            </div>
+            {route.notes || route.refundNote ? <details className="lpk-route-terms">
+              <summary>Fees, limits &amp; refund terms</summary>
+              {route.refundNote ? <p>{route.refundNote}</p> : null}
+              {route.notes ? <p>{route.notes}</p> : null}
             </details> : null}
-            <p className="lpk-route-details">{provider.accountRequired ? "Account required" : "No account"}{provider.kycRequired ? " · KYC required" : ""} · {route.assetSymbol} must be on {route.network}.</p>
-            {usesPrefill && !isBlocked ? <p className="lpk-route-note">Invoice and exact output amount will be prefilled. Review the provider’s quote before funding.</p> : null}
             {isBlocked ? <p className="lpk-route-disabled">Not available for this invoice.</p> : <a
               className="lpk-route-continue" href={handoff.url}
               onClick={() => onContinue(provider.id, usesPrefill)} target="_blank"

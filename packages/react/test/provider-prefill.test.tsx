@@ -30,7 +30,7 @@ it("prefills Satora from the ordinary directory card without a token search", ()
  expect(url.pathname).toBe("/42161:USDC/lightning:BTC");
  expect(url.searchParams.get("targetAmount")).toBe("1000");
  expect(url.searchParams.get("address")).toBe(invoice);
- expect(link).toHaveTextContent("Starts with USDC on Arbitrum");
+ expect(link).toHaveTextContent("USDC · Arbitrum");
  fireEvent.click(link);
  expect(writeText).not.toHaveBeenCalled();
 });
@@ -50,7 +50,7 @@ it("prefills FixedFloat from its ordinary directory and name-search cards", () =
   expect(url.searchParams.get("to")).toBe("BTCLN");
   expect(url.searchParams.get("toAmount")).toBe("0.00001");
   expect(url.searchParams.get("ref")).toBe("host-ref");
-  expect(link).toHaveTextContent("USDT on Tron");
+  expect(link).toHaveTextContent("USDT · Tron");
   fireEvent.click(link);
  }
  expect(writeText).not.toHaveBeenCalled();

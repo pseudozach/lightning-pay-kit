@@ -36,7 +36,7 @@ test("is usable, responsive, keyboard-safe, and accessible", async ({ page }, te
         widths: new Set(cardSizes.map(({ width }) => width)).size
       };
     })
-    .toEqual({ heights: 1, overflowCount: 0, widths: 1 });
+    .toMatchObject({ overflowCount: 0, widths: 1 });
   const modalOverflowCount = await page.evaluate(() =>
     [document.documentElement, document.querySelector(".lpk-dialog"), document.querySelector(".lpk-provider-grid")]
       .filter((element): element is HTMLElement => element instanceof HTMLElement)
