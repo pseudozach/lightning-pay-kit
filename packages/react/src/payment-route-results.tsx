@@ -44,7 +44,10 @@ export function PaymentRouteResults({ routes, affiliateOverrides, onContinue, in
             {route.limits?.minimumSats ? <p className="lpk-route-limit">Minimum: {route.limits.minimumExclusive ? "more than " : ""}{sats(route.limits.minimumSats)} sats · published {route.limits.checkedAt}</p> : null}
             {route.limits?.maximumSats ? <p className="lpk-route-limit">Maximum: {sats(route.limits.maximumSats)} sats</p> : null}
             {route.notes ? <p className="lpk-route-note">{route.notes}</p> : null}
-            {route.refundNote ? <p className="lpk-route-refund"><strong>Refund warning:</strong> {route.refundNote}</p> : null}
+            {route.refundNote ? <details className="lpk-route-terms">
+              <summary>Provider terms apply. Review fees, limits and refund conditions before depositing.</summary>
+              <p>{route.refundNote}</p>
+            </details> : null}
             <p className="lpk-route-details">{provider.accountRequired ? "Account required" : "No account"}{provider.kycRequired ? " · KYC required" : ""} · {route.assetSymbol} must be on {route.network}.</p>
             {usesPrefill && !isBlocked ? <p className="lpk-route-note">Invoice and exact output amount will be prefilled. Review the provider’s quote before funding.</p> : null}
             {isBlocked ? <p className="lpk-route-disabled">Not available for this invoice.</p> : <a

@@ -25,7 +25,11 @@ test("tiny invoice token routes are blocked honestly and networks stay separate"
   expect(prefill.pathname).toBe("/137:USDT0/lightning:BTC");
   expect(prefill.searchParams.get("targetAmount")).toBe("1000");
   expect(prefill.searchParams.get("address")).toMatch(/^lnbc10000n1/);
-  await expect(satora.getByText(/Refund warning:/)).toBeVisible();
+  await expect(satora.locator("details summary")).toContainText("Provider terms apply.");
+  await expect(satora.locator("details")).toHaveJSProperty("open", false);
+  await satora.locator("details summary").click();
+  await expect(satora.locator("details p")).toBeVisible();
+  await expect(satora.locator("details p")).not.toBeEmpty();
   await search.fill("USDT Ethereum");
   await expect(satora.getByText("Below provider minimum", { exact: true })).toBeVisible();
   await expect(satora.getByText(/Minimum: 10,000 sats/)).toBeVisible();

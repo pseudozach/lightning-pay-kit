@@ -23,7 +23,7 @@ export function App() {
         <div className="nav-links">
           <a href="#install">Get started</a>
           <a href={repositoryUrl}>GitHub</a>
-          <span className="version">v0.2.0</span>
+          <span className="version">v0.2.1</span>
         </div>
       </nav>
 
