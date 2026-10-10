@@ -80,6 +80,10 @@
   max-height: min(90vh, 780px);
   max-width: 760px;
   overflow: auto;
+  overscroll-behavior: contain;
+  scroll-padding: 1rem;
+  scrollbar-color: var(--lpk-border) transparent;
+  scrollbar-width: thin;
   padding: 1.35rem;
   width: 100%;
 }
@@ -122,6 +126,7 @@
 
 .lpk-close {
   border-radius: 50%;
+  flex: 0 0 44px;
   font-size: 1.5rem;
   height: 44px;
   line-height: 1;
@@ -144,6 +149,11 @@
   font-size: 0.78rem;
   min-height: 1.2rem;
   padding: 0.35rem 0.15rem 0;
+}
+
+.lpk-status:empty {
+  min-height: 0;
+  padding: 0;
 }
 
 .lpk-search {
@@ -174,13 +184,13 @@
   cursor: pointer;
   display: inline-flex;
   font: 800 1rem/1 inherit;
-  height: 36px;
+  height: 44px;
   justify-content: center;
   position: absolute;
-  right: 6px;
+  right: 4px;
   top: 50%;
   transform: translateY(-50%);
-  width: 36px;
+  width: 44px;
 }
 
 
@@ -193,24 +203,27 @@
 }
 
 .lpk-search input {
-  min-height: 44px;
-  padding: 0.65rem 2.6rem 0.65rem 0.8rem;
+  min-height: 52px;
+  padding: 0.75rem 3.25rem 0.75rem 0.9rem;
   width: min(290px, 40vw);
 }
 
 .lpk-categories {
   display: flex;
-  gap: 0.45rem;
-  margin: 0.9rem 0;
-  overflow-x: auto;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin: 1rem 0 1.25rem;
   padding: 3px;
 }
 
 .lpk-chip {
   border-radius: 999px;
   flex: none;
-  min-height: 38px;
-  padding: 0.45rem 0.75rem;
+  font-family: inherit;
+  font-size: 0.8125rem;
+  line-height: 1.25;
+  min-height: 44px;
+  padding: 0.5rem 0.85rem;
 }
 
 .lpk-chip-active {
@@ -221,8 +234,7 @@
 
 .lpk-provider-grid {
   display: grid;
-  gap: 0.6rem;
-  grid-auto-rows: 1fr;
+  gap: 0.75rem;
   grid-template-columns: repeat(2, minmax(0, 1fr));
   list-style: none;
   margin: 0;
@@ -239,16 +251,19 @@
   background: var(--lpk-panel-raised);
   border: 1px solid var(--lpk-border);
   border-radius: 14px;
+  box-sizing: border-box;
   color: var(--lpk-ink);
   display: flex;
-  gap: 0.7rem;
-  min-height: 132px;
-  padding: 0.7rem;
+  gap: 0.625rem;
+  min-width: 0;
+  overflow-wrap: anywhere;
+  padding: 0.9rem;
   text-decoration: none;
   width: 100%;
 }
 
 .lpk-provider:hover {
+  background: #252720;
   border-color: #6c705f;
 }
 
@@ -269,19 +284,26 @@
   display: flex;
   flex: 1;
   flex-direction: column;
-  font-size: 0.77rem;
-  gap: 0.16rem;
-  line-height: 1.32;
+  font-size: 0.8125rem;
+  gap: 0.35rem;
+  line-height: 1.45;
   min-width: 0;
 }
 
 .lpk-provider-title {
+  align-items: baseline;
+  flex-wrap: wrap;
   justify-content: flex-start;
   gap: 0.35rem;
 }
 
-.lpk-provider-copy > span:not(.lpk-provider-title, .lpk-provider-meta),
-.lpk-provider-copy small {
+.lpk-provider-title strong {
+  font-size: 0.875rem;
+  letter-spacing: -0.01em;
+  line-height: 1.35;
+}
+
+.lpk-provider-summary {
   color: var(--lpk-muted);
 }
 
@@ -289,19 +311,27 @@
   align-items: center;
   display: flex;
   flex-wrap: wrap;
-  gap: 0.3rem;
-  margin-top: auto;
-  padding-top: 0.25rem;
+  gap: 0.35rem;
+  padding-top: 0.3rem;
 }
 
 .lpk-meta-pill {
-  background: #303328;
-  border: 1px solid #41443a;
+  background: #292c25;
+  border: 1px solid #3d4135;
   border-radius: 999px;
   color: #c9cbc2;
-  font-size: 0.62rem;
-  line-height: 1;
-  padding: 0.26rem 0.42rem;
+  display: inline-flex;
+  font-size: 0.6875rem;
+  line-height: 1.3;
+  max-width: 100%;
+  padding: 0.25rem 0.5rem;
+}
+
+.lpk-meta-pill-primary {
+  background: rgb(216 255 82 / 14%);
+  border-color: rgb(216 255 82 / 35%);
+  color: var(--lpk-accent);
+  font-weight: 750;
 }
 
 .lpk-region {
@@ -321,13 +351,13 @@
   border-top: 1px solid var(--lpk-border);
   display: flex;
   justify-content: center;
-  margin-top: 0.6rem;
-  padding: 0.9rem 0 0.1rem;
+  margin-top: 1.25rem;
+  padding: 1rem 0 0.1rem;
 }
 
 .lpk-footer a {
   color: var(--lpk-muted);
-  font-size: 0.7rem;
+  font-size: 0.75rem;
   text-align: center;
   text-decoration-color: #5c604e;
   text-underline-offset: 3px;
@@ -342,6 +372,8 @@
   border-radius: 999px;
   color: var(--lpk-accent);
   font-size: 0.58rem;
+  line-height: 1.4;
+  max-width: 100%;
   padding: 0.15rem 0.35rem;
   text-transform: uppercase;
 }
@@ -382,6 +414,7 @@
     border-radius: 24px 24px 0 0;
     max-height: 94dvh;
     padding: 1rem;
+    padding-bottom: max(1rem, env(safe-area-inset-bottom));
   }
 
   .lpk-dialog::before {
@@ -406,6 +439,14 @@
 
   .lpk-search input {
     width: 100%;
+  }
+}
+
+@media (max-width: 420px) {
+  .lpk-provider-mark {
+    border-radius: 10px;
+    flex-basis: 36px;
+    height: 36px;
   }
 }
 

@@ -23,7 +23,7 @@ describe("LightningPaymentHelp", () => {
     const dialog = screen.getByRole("dialog", { name: "How can I pay?" });
     expect(within(dialog).getByText("Arkade pays fixed-amount invoices through Boltz swaps; LNDHub connects to your node.")).toBeVisible();
     expect(within(dialog).getByText("Wallet")).toBeVisible();
-    expect(within(dialog).getByText("Flexible custody")).toBeVisible();
+    expect(within(dialog).getByText("Custody options")).toBeVisible();
     expect(within(dialog).getByText("No account")).toBeVisible();
     expect(within(dialog).queryByText(/^configurable$/i)).not.toBeInTheDocument();
     expect(within(dialog).queryByText(/open BlueWallet's website/i)).not.toBeInTheDocument();
@@ -174,7 +174,7 @@ describe("LightningPaymentHelp", () => {
     expect(defaultLink).toHaveAttribute("href", "https://ff.io/?ref=pmdxabka");
     expect(defaultLink).toHaveAttribute("rel", "sponsored noopener noreferrer");
     expect(defaultLink).toHaveTextContent("Affiliate");
-    expect(screen.getByRole("link", { name: /Use this Bitcoin Lightning payment helper on your site/i })).toHaveAttribute(
+    expect(screen.getByRole("link", { name: /Built with Lightning Pay Kit/i })).toHaveAttribute(
       "href",
       "https://github.com/pseudozach/lightning-pay-kit"
     );

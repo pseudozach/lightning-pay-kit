@@ -11,5 +11,5 @@ it("warns about invoice limits on ordinary swap-provider browsing", () => {
   render(<LightningPaymentHelp invoice={fakeInvoice({ createdAt: now, amountHrp: "2u" })} now={now} trigger="button" />);
   fireEvent.click(screen.getByRole("button", { name: "How to pay this invoice" }));
   fireEvent.change(screen.getByRole("searchbox"), { target: { value: "Satora" } });
-  expect(screen.getByRole("link", { name: /Satora/ })).toHaveTextContent("Check invoice limits: search your coin and network");
+  expect(screen.getByRole("link", { name: /Satora/ })).toHaveTextContent("Check coin limits");
 });

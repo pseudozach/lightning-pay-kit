@@ -101,7 +101,7 @@
       ],
       "accountRequired": false,
       "kycRequired": false,
-      "capabilitySummary": "Embedded LDK node with optional remote-node connections.",
+      "capabilitySummary": "Pays Lightning invoices through Alby Hub or a connected Lightning node.",
       "lightningModes": [
         "embedded_node",
         "remote_node"
@@ -151,7 +151,7 @@
       ],
       "accountRequired": false,
       "kycRequired": false,
-      "capabilitySummary": "Swaps self-custodied Liquid funds at payment time.",
+      "capabilitySummary": "Swaps your Liquid balance to pay Lightning invoices.",
       "lightningModes": [
         "swap"
       ]
@@ -162,7 +162,7 @@
       "aliases": [
         "Arkade"
       ],
-      "capabilitySummary": "Swaps self-custodied Ark VTXOs to Lightning through a discovered RFQ solver.",
+      "capabilitySummary": "Swaps your Ark balance to pay fixed-amount Lightning invoices through an available solver.",
       "lightningModes": [
         "swap"
       ],
@@ -261,7 +261,7 @@
       ],
       "accountRequired": true,
       "kycRequired": true,
-      "capabilitySummary": "Custodial Lightning wallet for supported Latin American accounts.",
+      "capabilitySummary": "Pays fixed-amount Lightning invoices from your belo balance.",
       "lightningModes": [
         "exchange_withdrawal"
       ]
@@ -299,7 +299,7 @@
       ],
       "accountRequired": true,
       "kycRequired": true,
-      "capabilitySummary": "Lightning withdrawals depend on account and region availability.",
+      "capabilitySummary": "Withdraws BTC from your Binance balance to a Lightning invoice.",
       "lightningModes": [
         "exchange_withdrawal"
       ]
@@ -388,7 +388,7 @@
       "id": "bitbanana",
       "name": "BitBanana",
       "aliases": [],
-      "capabilitySummary": "Pays Lightning invoices through a connected LND, Core Lightning, or compatible wallet backend.",
+      "capabilitySummary": "Pays Lightning invoices through a connected node or compatible wallet backend.",
       "lightningModes": [
         "remote_node"
       ],
@@ -465,7 +465,7 @@
       ],
       "accountRequired": false,
       "kycRequired": false,
-      "capabilitySummary": "Custodial token swaps pay external Lightning invoices with network-specific quote limits.",
+      "capabilitySummary": "Swaps supported crypto to pay Lightning invoices within network-specific quote limits.",
       "lightningModes": [
         "swap"
       ]
@@ -562,7 +562,7 @@
       "aliases": [
         "BitKit"
       ],
-      "capabilitySummary": "Pays external Lightning invoices using an embedded node and funded spending channels.",
+      "capabilitySummary": "Pays Lightning invoices through the wallet's funded spending channels.",
       "lightningModes": [
         "embedded_node"
       ],
@@ -637,7 +637,7 @@
       ],
       "accountRequired": true,
       "kycRequired": true,
-      "capabilitySummary": "Confirms Lightning payments with your transaction PIN.",
+      "capabilitySummary": "Pays Lightning invoices from your Bitnob balance with transaction PIN confirmation.",
       "lightningModes": [
         "exchange_withdrawal"
       ]
@@ -752,7 +752,7 @@
       ],
       "accountRequired": true,
       "kycRequired": false,
-      "capabilitySummary": "Managed Lightning or self-custodial Spark wallet mode.",
+      "capabilitySummary": "Pays Lightning invoices from a managed balance or through Spark.",
       "lightningModes": [
         "custodial",
         "spark"
@@ -841,7 +841,7 @@
       ],
       "accountRequired": false,
       "kycRequired": false,
-      "capabilitySummary": "On-device LND and Neutrino with LSP liquidity support.",
+      "capabilitySummary": "Pays Lightning invoices through a node on your phone with LSP liquidity support.",
       "lightningModes": [
         "embedded_node"
       ]
@@ -885,7 +885,7 @@
       ],
       "accountRequired": false,
       "kycRequired": false,
-      "capabilitySummary": "Self-custodial Greenlight node managed from the app.",
+      "capabilitySummary": "Pays Lightning invoices through a Greenlight node managed from the app.",
       "lightningModes": [
         "hosted_node"
       ]
@@ -1011,7 +1011,7 @@
       ],
       "accountRequired": false,
       "kycRequired": false,
-      "capabilitySummary": "Embedded LND with LSP channels; the app is in maintenance mode.",
+      "capabilitySummary": "Pays Lightning invoices through its LSP channels; the app is in maintenance mode.",
       "lightningModes": [
         "embedded_node"
       ]
@@ -1090,7 +1090,7 @@
       "id": "cake-wallet",
       "name": "Cake Wallet",
       "aliases": [],
-      "capabilitySummary": "Pays invoices from funded Spark via Breez SDK on iOS, Android and macOS only; not Windows/Linux.",
+      "capabilitySummary": "Pays invoices from Spark on iOS, Android or macOS; not Windows/Linux, hardware or keys/watch-only.",
       "lightningModes": [
         "spark"
       ],
@@ -1176,7 +1176,7 @@
       ],
       "accountRequired": true,
       "kycRequired": true,
-      "capabilitySummary": "US only, with a $999 rolling 7-day Lightning limit.",
+      "capabilitySummary": "Pays Lightning invoices from your Bitcoin balance with a $999 rolling 7-day limit.",
       "lightningModes": [
         "custodial"
       ]
@@ -1254,7 +1254,7 @@
       ],
       "accountRequired": true,
       "kycRequired": true,
-      "capabilitySummary": "Lightning sends depend on account and region availability.",
+      "capabilitySummary": "Sends BTC from your Coinbase balance to a Lightning invoice.",
       "lightningModes": [
         "exchange_withdrawal"
       ]
@@ -1313,7 +1313,7 @@
       ],
       "accountRequired": true,
       "kycRequired": true,
-      "capabilitySummary": "Fixed-amount Lightning sends have no withdrawal fee.",
+      "capabilitySummary": "Pays fixed-amount Lightning invoices from your balance with no withdrawal fee.",
       "lightningModes": [
         "exchange_withdrawal"
       ]
@@ -1359,7 +1359,7 @@
       "aliases": [
         "Electrum Wallet"
       ],
-      "capabilitySummary": "Pays Lightning invoices through its own Lightning channels, with optional trampoline routing.",
+      "capabilitySummary": "Pays Lightning invoices through the wallet's own funded channels.",
       "lightningModes": [
         "embedded_node"
       ],
@@ -1445,7 +1445,7 @@
       ],
       "accountRequired": false,
       "kycRequired": false,
-      "capabilitySummary": "Custodial crypto swaps pay Lightning invoices; payout limits require an authenticated quote.",
+      "capabilitySummary": "Swaps crypto to pay Lightning invoices; payout limits require an authenticated quote.",
       "lightningModes": [
         "swap"
       ]
@@ -1483,7 +1483,7 @@
       ],
       "accountRequired": true,
       "kycRequired": true,
-      "capabilitySummary": "Amount-specific Lightning withdrawals require a verified account.",
+      "capabilitySummary": "Withdraws BTC from your Kraken balance to a fixed-amount Lightning invoice.",
       "lightningModes": [
         "exchange_withdrawal"
       ]
@@ -1562,7 +1562,7 @@
       "id": "lexe",
       "name": "Lexe",
       "aliases": [],
-      "capabilitySummary": "Pays through an always-online LDK node hosted in an attested secure enclave.",
+      "capabilitySummary": "Pays Lightning invoices through an always-online node hosted in secure hardware.",
       "lightningModes": [
         "hosted_node"
       ],
@@ -1805,7 +1805,7 @@
       ],
       "accountRequired": false,
       "kycRequired": false,
-      "capabilitySummary": "Submarine swaps connect its self-custodial balance to Lightning.",
+      "capabilitySummary": "Swaps funds from your Bitcoin balance to pay Lightning invoices.",
       "lightningModes": [
         "swap"
       ]
@@ -1851,7 +1851,7 @@
       ],
       "accountRequired": true,
       "kycRequired": true,
-      "capabilitySummary": "Limits each withdrawal to 100 through 10,000,000 sats.",
+      "capabilitySummary": "Pays fixed-amount Lightning invoices from your balance, from 100 to 10,000,000 sats.",
       "lightningModes": [
         "exchange_withdrawal"
       ]
@@ -1932,7 +1932,7 @@
       ],
       "accountRequired": true,
       "kycRequired": true,
-      "capabilitySummary": "Limits eligible accounts to 5M sats each and 50M sats daily.",
+      "capabilitySummary": "Pays Lightning invoices from your BTC balance, up to 5M sats each and 50M sats daily.",
       "lightningModes": [
         "exchange_withdrawal"
       ]
@@ -2055,7 +2055,7 @@
       ],
       "accountRequired": false,
       "kycRequired": false,
-      "capabilitySummary": "On-device Lightning node with automated ACINQ liquidity.",
+      "capabilitySummary": "Pays Lightning invoices through a node on your phone with automated ACINQ liquidity.",
       "lightningModes": [
         "embedded_node"
       ]
@@ -2422,7 +2422,7 @@
       "lightningModes": [
         "swap"
       ],
-      "capabilitySummary": "Atomic token swaps pay Lightning invoices; network floors and wrapped-Bitcoin refunds apply.",
+      "capabilitySummary": "Swaps supported tokens to pay fixed-amount Lightning invoices.",
       "regions": {
         "scope": "unknown",
         "label": "Availability varies",
@@ -2536,7 +2536,7 @@
       ],
       "accountRequired": true,
       "kycRequired": true,
-      "capabilitySummary": "Limits each Lightning withdrawal to 1 sat through C$5,000.",
+      "capabilitySummary": "Pays Lightning invoices from your Bitcoin balance, from 1 sat to C$5,000 per withdrawal.",
       "lightningModes": [
         "exchange_withdrawal"
       ]
@@ -2952,7 +2952,7 @@
       "id": "tether-wallet",
       "name": "Tether Wallet",
       "aliases": [],
-      "capabilitySummary": "Pays supplied Lightning invoices from its self-custodial Bitcoin Lightning balance.",
+      "capabilitySummary": "Pays Lightning invoices from your Bitcoin Lightning balance.",
       "lightningModes": [
         "unknown"
       ],
@@ -3004,7 +3004,7 @@
       "id": "thunderhub",
       "name": "ThunderHub",
       "aliases": [],
-      "capabilitySummary": "Pays pasted Lightning invoices through the LND node connected to its self-hosted web interface.",
+      "capabilitySummary": "Pays Lightning invoices through the LND node connected to its self-hosted web interface.",
       "lightningModes": [
         "remote_node"
       ],
@@ -3152,7 +3152,7 @@
       ],
       "accountRequired": false,
       "kycRequired": false,
-      "capabilitySummary": "Choose custodial or self-custodial wallet mode where available.",
+      "capabilitySummary": "Pays Lightning invoices from your wallet balance.",
       "lightningModes": [
         "custodial"
       ]
@@ -3230,7 +3230,7 @@
       ],
       "accountRequired": false,
       "kycRequired": false,
-      "capabilitySummary": "Embedded node or remote LND and Core Lightning connections.",
+      "capabilitySummary": "Pays Lightning invoices through its built-in node or a connected LND or Core Lightning node.",
       "lightningModes": [
         "embedded_node",
         "remote_node"

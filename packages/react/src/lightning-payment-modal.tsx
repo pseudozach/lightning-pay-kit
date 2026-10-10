@@ -16,6 +16,7 @@ import {
 } from "@lightning-pay-kit/core";
 import { BitcoinVNExchangeWidget } from "./bitcoinvn-exchange-widget.js";
 import { PaymentRouteResults } from "./payment-route-results.js";
+import { categoryLabels } from "./provider-presentation.js";
 import { createPortal } from "react-dom";
 import React, {
   useEffect,
@@ -37,15 +38,9 @@ const categories = [
 
 type Category = (typeof categories)[number][0];
 
-const categoryLabels: Record<PaymentProvider["category"], string> = {
-  exchange: "Exchange",
-  payment_app: "Payment app",
-  swap: "Swap",
-  wallet: "Wallet"
-};
 
 const custodyLabels: Record<PaymentProvider["custody"], string> = {
-  configurable: "Flexible custody",
+  configurable: "Custody options",
   custodial: "Custodial",
   self_custodial: "Self-custody",
   swap_based: "Swap-based"
@@ -382,18 +377,22 @@ export function LightningPaymentModal({
                                   <span className="lpk-badge">{provider.affiliateDisclosure}</span>
                                 ) : null}
                               </span>
-                              <span>{provider.capabilitySummary ?? provider.action.label}</span>
-                              {chooseSatoraRoute ? <span className="lpk-route-note">Choose a coin/network to check this invoice’s limits before opening Satora.</span> : null}
-                              {usesPrefill ? <span className="lpk-route-note">Starts with {provider.id === "fixedfloat" ? "USDT on Tron" : "USDC on Arbitrum"} → Lightning. Invoice and exact amount prefilled; change coin/network at {provider.name}.</span> : null}
-                              {provider.category === "swap" || provider.lightningModes?.includes("swap") ? <span className="lpk-route-note">Check invoice limits: search your coin and network before choosing a swap.</span> : null}
+                              <span className="lpk-provider-summary">{provider.capabilitySummary ?? provider.action.label}</span>
                               <span className="lpk-provider-meta">
-                                <small className="lpk-meta-pill">{categoryLabels[provider.category]}</small>
+                                <small className="lpk-meta-pill lpk-meta-pill-primary">{categoryLabels[provider.category]}</small>
                                 <small className="lpk-meta-pill">{custodyLabels[provider.custody]}</small>
                                 <small className="lpk-meta-pill">
                                   {provider.accountRequired ? "Account" : "No account"}
                                 </small>
                                 {provider.kycRequired ? <small className="lpk-meta-pill">KYC</small> : null}
-                                <small className="lpk-meta-pill lpk-region">{region.label}</small>
+                                <small className="lpk-meta-pill lpk-region">{provider.id === "wallet-of-satoshi" && provider.custody === "configurable" ? "Modes vary by region" : region.label}</small>
+                                {provider.id === "satora" ? <small className="lpk-meta-pill" title="Refunds may use the Bitcoin lock asset instead of your original token; review the network-specific provider terms before funding.">Refund asset varies</small> : null}
+                                {chooseSatoraRoute ? <small className="lpk-meta-pill" title="Choose your coin and network to check this invoice against provider limits before depositing.">Check coin limits</small> : null}
+                                {usesPrefill ? <>
+                                  <small className="lpk-meta-pill">{provider.id === "fixedfloat" ? "USDT · Tron" : "USDC · Arbitrum"}</small>
+                                  <small className="lpk-meta-pill">Invoice prefilled</small>
+                                </> : null}
+                                {!chooseSatoraRoute && (provider.category === "swap" || provider.lightningModes?.includes("swap")) ? <small className="lpk-meta-pill" title="Search your coin and network to check this invoice against provider limits before depositing.">Check limits</small> : null}
                               </span>
                             </span>
                             <span aria-hidden="true" className="lpk-arrow">↗</span>
@@ -415,7 +414,7 @@ export function LightningPaymentModal({
             rel="noopener noreferrer"
             target="_blank"
           >
-            Use this Bitcoin Lightning payment helper on your site <span aria-hidden="true">↗</span>
+            Built with Lightning Pay Kit <span aria-hidden="true">↗</span>
           </a>
         </footer>
       </div>

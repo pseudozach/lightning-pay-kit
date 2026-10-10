@@ -10,7 +10,7 @@ it("presents route refund conditions as collapsed neutral provider terms, not re
   render(<LightningPaymentHelp invoice={fakeInvoice({ createdAt: now, amountHrp: "10000n" })} now={now} />);
   fireEvent.click(screen.getByRole("button", { name: /How can I pay/i }));
   fireEvent.change(screen.getByRole("searchbox"), { target: { value: "USDT Tron" } });
-  const summaries = screen.getAllByText("Provider terms apply. Review fees, limits and refund conditions before depositing.");
+  const summaries = screen.getAllByText("Fees, limits & refund terms");
   for (const summary of summaries) {
     expect(summary.tagName).toBe("SUMMARY");
     const details = summary.closest("details")!;
@@ -19,6 +19,12 @@ it("presents route refund conditions as collapsed neutral provider terms, not re
     expect(details.querySelector("p")?.textContent).toBeTruthy();
   }
   expect(screen.queryAllByText("Refund warning:")).toHaveLength(0);
+  // Research/quote notes stay available on demand, not as extra card paragraphs.
+  expect(document.querySelectorAll(".lpk-route-card > .lpk-route-note")).toHaveLength(0);
+  for (const meta of document.querySelectorAll(".lpk-route-card .lpk-provider-meta")) {
+    expect(meta.firstElementChild).toHaveClass("lpk-meta-pill-primary");
+  }
+  expect(document.querySelectorAll(".lpk-route-card .lpk-provider-meta").length).toBeGreaterThan(0);
   expect(document.querySelectorAll(".lpk-route-refund")).toHaveLength(0);
   expect(screen.getByRole("link", { name: /Check limits with FixedFloat/ })).toBeVisible();
 });
