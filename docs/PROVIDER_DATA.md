@@ -66,6 +66,20 @@ The database records each discovery source and its limitations in `directorySour
 | [OpenReceive provider data v4](https://github.com/openreceive/openreceive/blob/master/packages/js/provider-data/src/data/openreceive-providers.v4.json) | Recent structured tutorials and provider leads | Corroboration, not first-party capability proof |
 | [Jameson Lopp’s Lightning resources](https://www.lopp.net/lightning-information.html) | Maintained ecosystem/dead-link cross-check | Not its own exchange capability matrix |
 | [Lightspark news](https://www.lightspark.com/news) | Newer exchange and finance-app integrations | Partnerships and UMA do not necessarily imply BOLT11 withdrawal |
+| [Lightsats wallet-guide source](https://github.com/lightsats/lightsats/blob/c9997c6fa2be0ecaa554229d574f4af9aa3229ac/app/lib/items/wallets.ts) | Pinned official source of the unavailable hosted wallet guide | Discovery names and install links, not proof of current BOLT11 support |
+
+### October 2026 maintenance findings
+
+Breez Mobile is retired and excluded from payment discovery. Its previously cited
+`breez/breezmobile` repository returns 404; Breez's [official recovery README](https://github.com/breez/breez-mobile-recovery/blob/610b2511b26da4bb201eac7215c41c7f08948765/README.md#channels)
+states that Breez closed the app's channels and recovery moves funds on-chain.
+The recovery utility is not a replacement Lightning-payment route. This finding
+applies to the original Breez Mobile app, not every product using a Breez SDK.
+
+The original Lightsats hosted guide failed TLS checks; its pinned, publicly
+readable first-party wallet-list source preserves discovery provenance without
+pretending the hosted guide is available. Neither change relaxes the strict audit
+or removes hidden-provider warnings from its report.
 
 ## Review standard
 

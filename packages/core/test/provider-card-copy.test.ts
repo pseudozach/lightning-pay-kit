@@ -23,7 +23,7 @@ describe("canonical provider card copy", () => {
     expect(summaryFor("bluewallet")).toMatch(/fixed-amount.*Boltz.*LNDHub.*node/i);
     expect(summaryFor("cake-wallet")).toMatch(/iOS.*Android.*macOS.*Windows.*Linux/i);
     expect(summaryFor("arkade-wallet")).toMatch(/fixed-amount.*solver/i);
-    expect(summaryFor("breez")).toMatch(/maintenance/i);
+    expect(summaryFor("breez")).toBeUndefined();
     expect(summaryFor("cash-app")).toMatch(/\$999.*7-day/);
     expect(summaryFor("fixedfloat")).toMatch(/authenticated quote/i);
   });

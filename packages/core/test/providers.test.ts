@@ -99,9 +99,9 @@ describe("provider directory", () => {
   });
 
   it("searches the human summary and structured Lightning mechanism", () => {
-    expect(filterProviders(defaultProviders, { query: "LSP" }).map(({ id }) => id)).toEqual(
-      expect.arrayContaining(["blixt", "breez"])
-    );
+    const lspIds = filterProviders(defaultProviders, { query: "LSP" }).map(({ id }) => id);
+    expect(lspIds).toContain("blixt");
+    expect(lspIds).not.toContain("breez");
     expect(
       filterProviders(defaultProviders, { query: "exchange withdrawal" }).length
     ).toBeGreaterThan(0);
