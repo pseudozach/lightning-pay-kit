@@ -2,11 +2,30 @@ import { describe, expect, it } from "vitest";
 import {
   auditProviderMetadata,
   collectProviderUrls,
-  defaultProviders
+  defaultProviders,
+  filterProviders,
+  providerDatabaseInfo
 } from "../src/index.js";
 import providerSchema from "../src/data/providers.schema.json";
 
 describe("provider database audit", () => {
+  it("keeps retired Breez Mobile out of payment discovery and cites official recovery evidence", () => {
+    const breez = defaultProviders.find(({ id }) => id === "breez");
+    expect(breez?.serviceStatus).toBe("retired");
+    expect(filterProviders(defaultProviders, {}).map(({ id }) => id)).not.toContain("breez");
+    expect(breez?.evidence.some(({ url, claim }) =>
+      url.startsWith("https://github.com/breez/breez-mobile-recovery") && /closed.*channels|channels.*closed/i.test(claim)
+    )).toBe(true);
+    expect(collectProviderUrls(defaultProviders).some(({ url }) => url === "https://github.com/breez/breezmobile")).toBe(false);
+  });
+
+  it("preserves Lightsats discovery provenance through its pinned official wallet-guide source", () => {
+    const source = providerDatabaseInfo.directorySources.find(({ name }) => name === "Lightsats wallet guide");
+    expect(source?.url).toMatch(/^https:\/\/github\.com\/lightsats\/lightsats\/blob\/[a-f0-9]{40}\/app\/lib\/items\/wallets\.ts$/);
+    expect(source?.role).toMatch(/hosted guide.*unavailable/i);
+    expect(source?.limitations).toMatch(/does not establish current BOLT11 input or service state/);
+  });
+
   it("collects action and evidence links with their provider IDs", () => {
     const links = collectProviderUrls(defaultProviders);
 

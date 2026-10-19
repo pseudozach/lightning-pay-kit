@@ -1,7 +1,7 @@
 {
   "$schema": "./providers.schema.json",
   "schemaVersion": 1,
-  "updatedAt": "2026-10-08",
+  "updatedAt": "2026-10-19",
   "directorySources": [
     {
       "name": "LightningExchanges",
@@ -44,9 +44,9 @@
     },
     {
       "name": "Lightsats wallet guide",
-      "url": "https://lightsats.com/guide/wallets",
-      "lastCheckedAt": "2026-10-08",
-      "role": "User-provided wallet discovery guide inspected before first-party research.",
+      "url": "https://github.com/lightsats/lightsats/blob/c9997c6fa2be0ecaa554229d574f4af9aa3229ac/app/lib/items/wallets.ts",
+      "lastCheckedAt": "2026-10-19",
+      "role": "Wallet discovery from Lightsats' official source; the hosted guide is currently unavailable.",
       "limitations": "Third-party names and lgt.st install links; does not establish current BOLT11 input or service state."
     },
     {
@@ -990,28 +990,28 @@
         "ios"
       ],
       "regions": {
-        "notes": "The original app is in maintenance mode.",
+        "notes": "The original Breez Mobile app is retired; recovery is on-chain only, not a Lightning payment route.",
         "scope": "global",
         "label": "Global"
       },
       "action": {
         "type": "copy_then_open",
-        "url": "https://github.com/breez/breezmobile",
-        "label": "Open Breez Mobile Lightning payment instructions"
+        "url": "https://github.com/breez/breez-mobile-recovery",
+        "label": "Open Breez Mobile retirement and recovery information"
       },
-      "serviceStatus": "maintenance",
+      "serviceStatus": "retired",
       "verificationStatus": "verified",
-      "lastVerifiedAt": "2026-09-29",
+      "lastVerifiedAt": "2026-10-19",
       "evidence": [
         {
-          "url": "https://github.com/breez/breezmobile",
-          "claim": "The repository marks Breez Mobile maintenance-only and documents embedded LND and LSP channels.",
-          "checkedAt": "2026-09-29"
+          "url": "https://github.com/breez/breez-mobile-recovery/blob/610b2511b26da4bb201eac7215c41c7f08948765/README.md#channels",
+          "claim": "Breez's official recovery tool states that Breez closed the app's channels; backups recover funds on-chain rather than paying Lightning invoices.",
+          "checkedAt": "2026-10-19"
         }
       ],
       "accountRequired": false,
       "kycRequired": false,
-      "capabilitySummary": "Pays Lightning invoices through its LSP channels; the app is in maintenance mode.",
+      "capabilitySummary": "Legacy app retired; official recovery restores backups and moves funds on-chain, not through Lightning invoice payments.",
       "lightningModes": [
         "embedded_node"
       ]
