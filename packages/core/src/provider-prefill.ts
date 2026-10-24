@@ -5,6 +5,8 @@ import { defaultPaymentRoutes, discoverPaymentRoutes, type PaymentRouteView } fr
 export interface PaymentRouteHandoff {
   readonly url: string;
   readonly invoicePrefilled: boolean;
+  /** False when the verified destination carries only an amountless invoice. */
+  readonly amountPrefilled?: boolean;
 }
 const satoraChains: Readonly<Record<string, string>> = { Ethereum: "1", Polygon: "137", Arbitrum: "42161", Rootstock: "30" };
 export interface PaymentRouteHandoffOptions {
@@ -25,15 +27,20 @@ export function createPaymentRouteHandoff(view: PaymentRouteView, invoice: strin
     if (affiliateUrl.origin !== "https://ff.io" || affiliateUrl.pathname !== "/") return fallback;
   } else if (destination !== safeProvider.action.url) return fallback;
   const metadata = parseInvoiceMetadata(invoice, options);
-  if (!metadata.ok || metadata.expired || metadata.network !== "bitcoin" || metadata.amountMsat === null || metadata.amountMsat <= 0n || metadata.amountMsat % 1000n !== 0n) return fallback;
+  if (!metadata.ok || metadata.expired || metadata.network !== "bitcoin") return fallback;
+  // FixedFloat's first-party form supports an invoice destination without an
+  // output amount. It still owns amount entry, limits and payment acceptance.
+  if (metadata.amountMsat === null && view.provider.id !== "fixedfloat") return fallback;
+  if (metadata.amountMsat !== null && (metadata.amountMsat <= 0n || metadata.amountMsat % 1000n !== 0n)) return fallback;
   // Do not trust a caller-supplied eligibility label; reevaluate the actual invoice.
   const checked = discoverPaymentRoutes([view.provider], [view.route], { query: view.route.assetSymbol, amountMsat: metadata.amountMsat, invoiceNetwork: metadata.network, ...options })[0];
-  if (!checked || !["within_limits", "limits_unknown"].includes(checked.eligibility)) return fallback;
+  if (!checked || !["within_limits", "limits_unknown", ...(metadata.amountMsat === null && view.provider.id === "fixedfloat" ? ["amount_unknown"] : [])].includes(checked.eligibility)) return fallback;
   // Only reviewed canonical source asset/network combinations get a prefill contract.
   const canonical = defaultPaymentRoutes.find(route => route.id === view.route.id && route.providerId === view.provider.id && route.assetSymbol === view.route.assetSymbol && route.network === view.route.network);
   if (!canonical) return fallback;
   let url: URL;
   if (view.provider.id === "satora") {
+    if (metadata.amountMsat === null) return fallback;
     const chain = satoraChains[canonical.network];
     if (!chain || !/^[A-Za-z0-9]{1,24}$/.test(canonical.assetSymbol)) return fallback;
     url = new URL(`https://app.satora.io/${chain}:${canonical.assetSymbol}/lightning:BTC`);
@@ -42,19 +49,21 @@ export function createPaymentRouteHandoff(view: PaymentRouteView, invoice: strin
   } else if (view.provider.id === "fixedfloat") {
     const code = canonical.id.slice("fixedfloat-".length).toUpperCase();
     if (!/^[A-Z0-9]{2,24}$/.test(code)) return fallback;
-    const sats = metadata.amountMsat / 1000n;
-    const fraction = (sats % 100000000n).toString().padStart(8, "0").replace(/0+$/, "");
-    const btc = (sats / 100000000n).toString() + (fraction ? `.${fraction}` : "");
     url = new URL("https://ff.io/");
     // Copy only the verified referral parameter, never host-supplied payment fields.
     const ref = affiliateUrl.searchParams.get("ref");
     if (ref !== null) url.searchParams.set("ref", ref);
     url.searchParams.set("from", code);
     url.searchParams.set("to", "BTCLN");
-    url.searchParams.set("toAmount", btc);
+    if (metadata.amountMsat !== null) {
+      const sats = metadata.amountMsat / 1000n;
+      const fraction = (sats % 100000000n).toString().padStart(8, "0").replace(/0+$/, "");
+      const btc = (sats / 100000000n).toString() + (fraction ? `.${fraction}` : "");
+      url.searchParams.set("toAmount", btc);
+    }
     url.searchParams.set("address", metadata.invoice);
-    url.searchParams.set("type", "fixed");
+    if (metadata.amountMsat !== null) url.searchParams.set("type", "fixed");
   } else return fallback;
   if (url.href.length > 8192) return fallback;
-  return { url: url.href, invoicePrefilled: true };
+  return { url: url.href, invoicePrefilled: true, amountPrefilled: metadata.amountMsat !== null };
 }

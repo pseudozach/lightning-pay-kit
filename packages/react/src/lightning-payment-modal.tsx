@@ -391,6 +391,7 @@ export function LightningPaymentModal({
                                 {usesPrefill ? <>
                                   <small className="lpk-meta-pill">{provider.id === "fixedfloat" ? "USDT · Tron" : "USDC · Arbitrum"}</small>
                                   <small className="lpk-meta-pill">Invoice prefilled</small>
+                                  {handoff.amountPrefilled === false ? <small className="lpk-meta-pill">Choose amount at provider</small> : null}
                                 </> : null}
                                 {!chooseSatoraRoute && (provider.category === "swap" || provider.lightningModes?.includes("swap")) ? <small className="lpk-meta-pill" title="Search your coin and network to check this invoice against provider limits before depositing.">Check limits</small> : null}
                               </span>

@@ -6244,6 +6244,36 @@
       ],
       "notes": "Requires the user wallet to hold a funded Spark balance. Not a token conversion service or payment guarantee; provider confirms quote, liquidity and invoice expiry. Invoice sats limits unknown; no zero minimum invented.",
       "refundNote": "Recovery, exits and refunds follow the wallet and underlying Spark protocol; payer must review provider instructions before funding."
+    },
+    {
+      "id": "aqua-lbtc-liquid",
+      "providerId": "aqua",
+      "assetSymbol": "L-BTC",
+      "assetName": "Liquid Bitcoin",
+      "network": "Liquid",
+      "aliases": ["Liquid", "LBTC"],
+      "lastVerifiedAt": "2026-10-24",
+      "evidence": [
+        {"url": "https://aqua.net/features", "claim": "AQUA documents Lightning on Liquid and on-the-fly swaps for invoice payments.", "checkedAt": "2026-10-24"},
+        {"url": "https://github.com/AquaWallet/aqua-wallet/blob/main/lib/features/boltz/providers/boltz_normal_swap_provider.dart", "claim": "AQUA creates an LbtcLnSwap submarine swap using the supplied invoice and funds it with its L-BTC asset.", "checkedAt": "2026-10-24"}
+      ],
+      "notes": "Use an existing funded AQUA wallet to pay the Lightning invoice from L-BTC through a submarine swap. No browser invoice prefill. Live swap availability, invoice limits, fees, liquidity and expiry must be checked in AQUA; this is not a payment guarantee.",
+      "refundNote": "Review AQUA and its swap provider's recovery and refund instructions before funding; refunds and network fees are not guaranteed."
+    },
+    {
+      "id": "aqua-usdt-liquid",
+      "providerId": "aqua",
+      "assetSymbol": "USDt",
+      "assetName": "Liquid Tether",
+      "network": "Liquid",
+      "aliases": ["USDT", "Liquid USDt"],
+      "lastVerifiedAt": "2026-10-24",
+      "evidence": [
+        {"url": "https://aqua.net/features", "claim": "AQUA supports USDT on Liquid and Lightning on Liquid.", "checkedAt": "2026-10-24"},
+        {"url": "https://github.com/AquaWallet/aqua-wallet/blob/main/lib/features/sideswap/providers/swap_assets_provider.dart", "claim": "AQUA's SideSwap asset selection maps Liquid USDt to L-BTC; its Lightning submarine swap is a separate flow.", "checkedAt": "2026-10-24"}
+      ],
+      "notes": "Two steps in AQUA: convert Liquid USDt to L-BTC using SideSwap, then pay the Lightning invoice from L-BTC. SideSwap is not a direct USDt-to-Lightning invoice payer. Each step has separate fees, liquidity and limits; check both before converting. No browser invoice prefill or automatic conversion.",
+      "refundNote": "Converting USDt to L-BTC is a separate completed trade, not automatically reversed if the later Lightning payment fails. Review both providers' refund terms and network fees."
     }
   ]
 }

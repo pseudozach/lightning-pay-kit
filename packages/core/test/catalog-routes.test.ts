@@ -40,11 +40,11 @@ describe("evidence-backed canonical token routes", () => {
   });
   it("has valid unique canonical identities, references and dated evidence without research-only fields", () => {
     const { routes } = database();
-    expect(routes).toHaveLength(285);
+    expect(routes).toHaveLength(287);
     expect(new Set(routes.map(({ id }) => id)).size).toBe(routes.length);
     for (const route of routes) {
       expect(defaultProviders.some(({ id }) => id === route.providerId), route.id).toBe(true);
-      expect(route.lastVerifiedAt).toBe("2026-10-08");
+      expect(route.lastVerifiedAt).toBe(route.providerId === "aqua" ? "2026-10-24" : "2026-10-08");
       expect(route.evidence.length).toBeGreaterThan(0);
       expect(Object.keys(route)).not.toContain("source");
       expect(Object.keys(route)).not.toContain("routeStatus");
