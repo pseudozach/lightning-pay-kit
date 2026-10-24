@@ -91,6 +91,9 @@ it.each([
  render(<LightningPaymentHelp invoice={invoice} now={now} {...(override===undefined?{}:{affiliateOverrides:{fixedfloat:override}})}/>);
  fireEvent.click(screen.getByRole("button",{name:/How can I pay/i}));
  const directoryURL=screen.getByRole("link",{name:/FixedFloat/}).getAttribute("href");
+ fireEvent.change(screen.getByRole("searchbox"),{target:{value:"FixedFloat"}});
+ expect(screen.getByRole("link",{name:/FixedFloat/})).toHaveAttribute("href",directoryURL);
+ expect(new URL(directoryURL!).searchParams.getAll("ref")).toEqual(refs);
  fireEvent.change(screen.getByRole("searchbox"),{target:{value:"USDT Tron"}});
  const link=screen.getByRole("link",{name:/Check limits with FixedFloat/});
  const url=new URL(link.getAttribute("href")!);
