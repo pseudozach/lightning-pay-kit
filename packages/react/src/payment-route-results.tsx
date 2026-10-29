@@ -31,16 +31,17 @@ export function PaymentRouteResults({ routes, affiliateOverrides, onContinue, in
         const { route, eligibility, reason } = view;
         const provider = applyAffiliateOverrides([view.provider], affiliateOverrides)[0];
         if (!provider) return null;
-        const isBlocked = blocked.has(eligibility);
         const handoff = createPaymentRouteHandoff(view, invoice, { affiliateOverrides, ...(now === undefined ? {} : { now }) });
         const usesPrefill = handoff.invoicePrefilled;
+        const chooseAmount = usesPrefill && handoff.amountPrefilled === false;
+        const isBlocked = blocked.has(eligibility) && !(eligibility === "amount_unknown" && chooseAmount);
         return <li key={route.id}>
           <article className="lpk-route-card">
             <div className="lpk-provider-title"><strong>{provider.name}</strong>
               {provider.affiliateDisclosure ? <span className="lpk-badge">{provider.affiliateDisclosure}</span> : null}
             </div>
             <p className="lpk-route-path">{route.assetSymbol} · {route.network} → Lightning</p>
-            <span className={eligibility === "within_limits" ? "lpk-badge lpk-route-fit" : "lpk-badge lpk-badge-warning"}>{labels[eligibility]}</span>
+            <span className={eligibility === "within_limits" ? "lpk-badge lpk-route-fit" : "lpk-badge lpk-badge-warning"}>{chooseAmount ? "Choose amount with provider" : labels[eligibility]}</span>
             <p className="lpk-route-reason">{reason}</p>
             {route.limits?.minimumSats ? <p className="lpk-route-limit">Minimum: {route.limits.minimumExclusive ? "more than " : ""}{sats(route.limits.minimumSats)} sats · published {route.limits.checkedAt}</p> : null}
             {route.limits?.maximumSats ? <p className="lpk-route-limit">Maximum: {sats(route.limits.maximumSats)} sats</p> : null}
@@ -48,18 +49,20 @@ export function PaymentRouteResults({ routes, affiliateOverrides, onContinue, in
               <small className="lpk-meta-pill lpk-meta-pill-primary">{categoryLabels[provider.category]}</small>
               <small className="lpk-meta-pill">{provider.accountRequired ? "Account required" : "No account"}</small>
               {provider.kycRequired ? <small className="lpk-meta-pill">KYC</small> : null}
-              {usesPrefill && !isBlocked ? <small className="lpk-meta-pill" title="Invoice and exact output amount will be prefilled. Review the provider’s quote before funding.">Invoice prefilled</small> : null}
+              {usesPrefill && !isBlocked ? <small className="lpk-meta-pill" title={chooseAmount ? "Only the invoice is prefilled. Choose an amount and confirm limits with the provider before funding." : "Invoice and exact output amount will be prefilled. Review the provider’s quote before funding."}>Invoice prefilled</small> : null}
             </div>
+            {chooseAmount ? <p className="lpk-route-note">This invoice has no amount. Choose the amount and confirm limits on {provider.name}. Nothing has been paid.</p> : null}
+            {route.id === "aqua-usdt-liquid" ? <p className="lpk-route-note">{route.notes}</p> : null}
             {route.notes || route.refundNote ? <details className="lpk-route-terms">
               <summary>Fees, limits &amp; refund terms</summary>
               {route.refundNote ? <p>{route.refundNote}</p> : null}
-              {route.notes ? <p>{route.notes}</p> : null}
+              {route.notes && route.id !== "aqua-usdt-liquid" ? <p>{route.notes}</p> : null}
             </details> : null}
             {isBlocked ? <p className="lpk-route-disabled">Not available for this invoice.</p> : <a
               className="lpk-route-continue" href={handoff.url}
               onClick={() => onContinue(provider.id, usesPrefill)} target="_blank"
               rel={provider.affiliateDisclosure ? "sponsored noopener noreferrer" : "noopener noreferrer"}
-            >{eligibility === "limits_unknown" ? "Check limits with " : "Continue with "}{provider.name} ↗</a>}
+            >{chooseAmount ? "Choose amount with " : eligibility === "limits_unknown" ? "Check limits with " : "Continue with "}{provider.name} ↗</a>}
           </article>
         </li>;
       })}

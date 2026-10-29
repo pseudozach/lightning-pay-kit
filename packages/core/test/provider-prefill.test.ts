@@ -20,6 +20,17 @@ describe("verified browser prefill", () => {
   expect(url.searchParams.get("address")).toBe(invoice);
   expect(url.searchParams.has("fromAmount")).toBe(false);
  });
+ it("prefills an amountless FixedFloat invoice without inventing a payment amount", () => {
+  const r=defaultPaymentRoutes.find(r=>r.id==="fixedfloat-usdttrc")!;
+  const p=defaultProviders.find(p=>p.id==="fixedfloat")!;
+  const v=discoverPaymentRoutes([p],[r],{query:"USDT",invoiceNetwork:"bitcoin",amountMsat:null,now})[0]!;
+  const zero=fakeInvoice({createdAt:now,amountHrp:""});
+  const result=createPaymentRouteHandoff(v,zero,{now});
+  expect(result.invoicePrefilled).toBe(true);
+  const url=new URL(result.url);
+  expect(url.searchParams.get("address")).toBe(zero);expect(url.searchParams.get("to")).toBe("BTCLN");
+  expect(url.searchParams.has("toAmount")).toBe(false);expect(url.searchParams.has("fromAmount")).toBe(false);
+ });
  it("never returns an unsafe fallback URL from untrusted provider metadata", () => {
   const bad = {...view,provider:{...provider,action:{...provider.action,url:"javascript:alert(1)"}}};
   expect(createPaymentRouteHandoff(bad,invoice,{now}).url).not.toMatch(/^javascript:/);
